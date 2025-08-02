@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -20,4 +21,11 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "QRCraft"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(":app")
+include(":core:presentation")
+include(":core:data")
+include(":core:domain")
+include(":home:presentation")
+include(":home:data")
+include(":home:domain")
