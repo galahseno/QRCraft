@@ -1,0 +1,25 @@
+package id.dev.core.presentation.theme
+
+import androidx.compose.ui.graphics.Color
+
+val primary = Color(0xFFEBFF69)
+val surface = Color(0xFFEDF2F5)
+val surfaceHigher = Color(0xFFFFFFFF)
+val onSurface = Color(0xFF273037)
+val onSurfaceAlt = Color(0xFF505F6A)
+val overlay = Color(0x80000000)
+val onOverlay = Color(0xFFFFFFFF)
+val link = Color(0xFF373F05)
+val linkBg = Color(0x4DEBFF69)
+val error = Color(0xFFF12244)
+val success = Color(0xFF4DDA9D)
+val text = Color(0xFF583DC5)
+val textBg = Color(0x1A583DC5)
+val contact = Color(0xFF259570)
+val contactBg = Color(0x1A259570)
+val geo = Color(0xFFB51D5C)
+val geoBg = Color(0x1AB51D5C)
+val phone = Color(0xFFC86017)
+val phoneBg = Color(0x1AC86017)
+val wifi = Color(0xFF1F44CD)
+val wifiBg = Color(0x1A1F44CD)
