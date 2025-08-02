@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.QRCraft.QRCraftSplash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#101C28</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.QRCraft</item>
+    </style>
+</resources>
