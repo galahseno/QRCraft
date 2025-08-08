@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="camera_dialog_desc">This app cannot function without camera access. To scan QR codes, please grant permission.</string>
+    <string name="camera_required">Camera Required</string>
+    <string name="point_camera_qr">Point your camera at a QR code</string>
+    <string name="camera_permission_granted">Camera permission granted</string>
+    <string name="no_qr_codes">No QR-codes found</string>
+    <string name="loading">Loading</string>
+    <string name="analyzer_error">Analyze error: %s</string>
+    <string name="initialize_error">Initialize error: %s</string>\
+</resources>

@@ -7,6 +7,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.timber)
+    implementation(libs.bundles.camerax)
     with(projects) {
         implementation(core.presentation)
         implementation(core.domain)

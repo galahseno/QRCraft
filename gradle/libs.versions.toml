@@ -14,6 +14,8 @@ coroutines = "1.10.2"
 timber = "5.0.1"
 kotlinx-serialization-json = "1.9.0"
 coreSplashscreen = "1.0.1"
+camerax = "1.4.2"
+mlkit = "17.3.0"
 
 # Project versions
 projectAppId = "id.dev.qrcraft"
@@ -47,6 +49,13 @@ kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-seria
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+
+androidx-camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+androidx-camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+androidx-camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+androidx-camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+androidx-camerax-mlkit-vision = { group = "androidx.camera", name = "camera-mlkit-vision", version.ref = "camerax" }
+mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit" }
 
 # Gradle
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -86,3 +95,11 @@ compose-debug = [
 ]
 koin = ["koin-core", "koin-android"]
 koin-compose = ["koin-core", "koin-android", "koin-androidx-compose"]
+camerax = [
+    "androidx-camerax-core",
+    "androidx-camerax-view",
+    "androidx-camerax-camera2",
+    "androidx-camerax-lifecycle",
+    "mlkit-barcode-scanning",
+    "androidx-camerax-mlkit-vision"
+]
