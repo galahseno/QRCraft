@@ -15,7 +15,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     implementation(libs.androidx.core.splashscreen)
-
+    implementation(libs.kotlinx.serialization)
     implementation(libs.timber)
 
     with(projects) {

@@ -7,6 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.mlkit.barcode.scanning)
     with(projects) {
         implementation(core.domain)
         implementation(core.data)
