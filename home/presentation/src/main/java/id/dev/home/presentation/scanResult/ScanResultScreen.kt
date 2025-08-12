@@ -24,9 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import id.dev.core.presentation.R
+import id.dev.core.presentation.utils.ObserveAsEvents
 import id.dev.home.presentation.model.BarcodeResult
 import id.dev.home.presentation.scanResult.results.ContactResultContent
 import id.dev.home.presentation.scanResult.results.GeoResultContent
@@ -35,12 +34,38 @@ import id.dev.home.presentation.scanResult.results.PhoneResultContent
 import id.dev.home.presentation.scanResult.results.TextResultContent
 import id.dev.home.presentation.scanResult.results.WiFiResultContent
 import kotlinx.serialization.json.Json
+import org.koin.compose.viewmodel.koinViewModel
 import timber.log.Timber
+
+@Composable
+fun ScanResultScreenRoot(
+    barcodeResult: String,
+    onNavigateUp: () -> Unit = {},
+    onOpenLink: (String) -> Unit = {},
+    onShare: (String) -> Unit = {},
+    onCopyClicked: (String) -> Unit = {},
+    viewModel: ScanResultScreenViewModel = koinViewModel()
+) {
+
+    ObserveAsEvents(viewModel.event) {
+        when (it) {
+            ScanResultScreenEvent.NavigateUp -> onNavigateUp()
+            is ScanResultScreenEvent.OpenLink -> onOpenLink(it.url)
+            is ScanResultScreenEvent.ShareContent -> onShare(it.share)
+            is ScanResultScreenEvent.CopyContent -> onCopyClicked(it.copy)
+        }
+    }
+
+    ScanResultScreen(
+        onAction = viewModel::onAction,
+        barcodeResult = barcodeResult
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanResultScreen(
-    navController: NavHostController = rememberNavController(),
+    onAction: (ScanResultScreenAction) -> Unit,
     barcodeResult: String
 ) {
     val parsedResult = remember(barcodeResult) {
@@ -63,14 +88,13 @@ fun ScanResultScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.scan_result)
+                        text = stringResource(R.string.scan_result),
+                        style = MaterialTheme.typography.titleMedium
                     )
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        onClick = { onAction(ScanResultScreenAction.OnNavigateUpClicked) }
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
@@ -94,47 +118,51 @@ fun ScanResultScreen(
                 .padding(innerPadding)
                 .consumeWindowInsets(WindowInsets.navigationBars)
         ) {
-            parsedResult?.let { result ->
-                when (result) {
-                    is BarcodeResult.Link -> {
-                        LinkResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-
-                    is BarcodeResult.Text -> {
-                        TextResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-                    is BarcodeResult.Contact -> {
-                        ContactResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-                    is BarcodeResult.Geo -> {
-                        GeoResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-                    is BarcodeResult.Phone -> {
-                        PhoneResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-                    is BarcodeResult.Wifi -> {
-                        WiFiResultContent(
-                            modifier = Modifier.align(Alignment.Center),
-                            linkResult = result
-                        )
-                    }
-                    is BarcodeResult.ScanError -> {}
+            when (parsedResult) {
+                is BarcodeResult.Link -> {
+                    LinkResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        linkResult = parsedResult,
+                        onAction = onAction
+                    )
                 }
+                is BarcodeResult.Text -> {
+                    TextResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        textResult = parsedResult,
+                        onAction = onAction
+                    )
+                }
+                is BarcodeResult.Contact -> {
+                    ContactResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        contactResult = parsedResult,
+                        onAction = onAction
+                    )
+                }
+                is BarcodeResult.Geo -> {
+                    GeoResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        geoResult = parsedResult,
+                        onAction = onAction
+                    )
+                }
+                is BarcodeResult.Phone -> {
+                    PhoneResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        phoneResult = parsedResult,
+                        onAction = onAction
+                    )
+                }
+                is BarcodeResult.Wifi -> {
+                    WiFiResultContent(
+                        modifier = Modifier.align(Alignment.Center),
+                        wifiResult = parsedResult,
+                        onAction = onAction
+                    )
+                }
+                is BarcodeResult.ScanError -> {}
+                null -> {}
             }
         }
     }

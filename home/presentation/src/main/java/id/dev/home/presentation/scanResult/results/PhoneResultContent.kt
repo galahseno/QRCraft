@@ -1,15 +1,11 @@
 package id.dev.home.presentation.scanResult.results
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,26 +14,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import id.dev.core.presentation.R
 import id.dev.home.presentation.model.BarcodeResult
 import id.dev.home.presentation.scanResult.ActionButtonsLayout
+import id.dev.home.presentation.scanResult.ScanResultScreenAction
+import id.dev.home.presentation.scanResult.components.QrCodeImageLayout
 
 @Composable
 internal fun PhoneResultContent(
     modifier: Modifier = Modifier,
-    linkResult: BarcodeResult.Phone
+    phoneResult: BarcodeResult.Phone,
+    onAction: (ScanResultScreenAction) -> Unit
 ) {
     Box(
         modifier = modifier
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -50,7 +45,7 @@ internal fun PhoneResultContent(
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
-                    text = linkResult::class.java.simpleName,
+                    text = phoneResult::class.java.simpleName,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -59,7 +54,7 @@ internal fun PhoneResultContent(
                         .padding(bottom = 16.dp)
                 )
                 Text(
-                    text = linkResult.number,
+                    text = phoneResult.number,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -72,19 +67,12 @@ internal fun PhoneResultContent(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 ActionButtonsLayout(
-                    share = "${linkResult::class.java.simpleName}: ${linkResult.number}",
-                    copyToClipboard = linkResult.number
+                    share = "${phoneResult::class.java.simpleName}: ${phoneResult.number}",
+                    copyToClipboard = phoneResult.number,
+                    onAction = onAction
                 )
             }
         }
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.scan),
-            contentDescription = null,
-            modifier = Modifier
-                .size(160.dp)
-                .align(Alignment.TopCenter)
-                .offset(y = (-80).dp)
-                .background(Color.White, RoundedCornerShape(36.dp))
-        )
+       QrCodeImageLayout()
     }
 }

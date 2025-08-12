@@ -1,15 +1,11 @@
 package id.dev.home.presentation.scanResult.results
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,27 +14,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import id.dev.core.presentation.R
 import id.dev.home.presentation.model.BarcodeResult
 import id.dev.home.presentation.scanResult.ActionButtonsLayout
-import kotlin.jvm.java
+import id.dev.home.presentation.scanResult.ScanResultScreenAction
+import id.dev.home.presentation.scanResult.components.QrCodeImageLayout
 
 @Composable
 internal fun WiFiResultContent(
     modifier: Modifier = Modifier,
-    linkResult: BarcodeResult.Wifi
+    wifiResult: BarcodeResult.Wifi,
+    onAction: (ScanResultScreenAction) -> Unit
 ) {
     Box(
         modifier = modifier
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -51,7 +45,7 @@ internal fun WiFiResultContent(
                 Spacer(modifier = Modifier.height(100.dp))
 
                 Text(
-                    text = linkResult::class.java.simpleName,
+                    text = wifiResult::class.java.simpleName,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -60,7 +54,7 @@ internal fun WiFiResultContent(
                         .padding(bottom = 16.dp)
                 )
                 Text(
-                    text = linkResult.ssid,
+                    text = wifiResult.ssid,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -71,7 +65,7 @@ internal fun WiFiResultContent(
                 )
 
                 Text(
-                    text = linkResult.password,
+                    text = wifiResult.password,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -83,7 +77,7 @@ internal fun WiFiResultContent(
                 )
 
                 Text(
-                    text = linkResult.encryptionType,
+                    text = wifiResult.encryptionType,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
                         lineHeight = 20.sp
@@ -96,19 +90,12 @@ internal fun WiFiResultContent(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 ActionButtonsLayout(
-                    share = "${linkResult::class.java.simpleName} \n ${linkResult.ssid} \n ${linkResult.password} \n ${linkResult.encryptionType}",
-                    copyToClipboard = "${linkResult::class.java.simpleName} \n ${linkResult.ssid} \n ${linkResult.password} \n ${linkResult.encryptionType}"
+                    share = "${wifiResult::class.java.simpleName} \n ${wifiResult.ssid} \n ${wifiResult.password} \n ${wifiResult.encryptionType}",
+                    copyToClipboard = "${wifiResult::class.java.simpleName} \n ${wifiResult.ssid} \n ${wifiResult.password} \n ${wifiResult.encryptionType}",
+                    onAction = onAction
                 )
             }
         }
-        Image(
-            imageVector = ImageVector.vectorResource(R.drawable.scan),
-            contentDescription = null,
-            modifier = Modifier
-                .size(160.dp)
-                .align(Alignment.TopCenter)
-                .offset(y = (-80).dp)
-                .background(Color.White, RoundedCornerShape(36.dp))
-        )
+        QrCodeImageLayout()
     }
 }

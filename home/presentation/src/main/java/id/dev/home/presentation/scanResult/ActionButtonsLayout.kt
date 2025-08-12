@@ -9,22 +9,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.R
 import id.dev.core.presentation.component.QRCraftButton
-import id.dev.home.presentation.utils.copyToClipboard
-import id.dev.home.presentation.utils.shareLink
 
 @Composable
 internal fun ActionButtonsLayout(
     share: String,
-    copyToClipboard: String
+    copyToClipboard: String,
+    onAction: (ScanResultScreenAction) -> Unit
 ) {
-
-    val context = LocalContext.current
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -34,7 +30,11 @@ internal fun ActionButtonsLayout(
             buttonText = stringResource(R.string.share),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
-                shareLink(context, share)
+                onAction(
+                    ScanResultScreenAction.OnShareClicked(
+                        shareContent = share
+                    )
+                )
             },
             modifier = Modifier.weight(1f),
             leadingIcon = {
@@ -50,10 +50,14 @@ internal fun ActionButtonsLayout(
             buttonText = stringResource(R.string.copy),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
-                context.copyToClipboard(copyToClipboard)
+                onAction(
+                    ScanResultScreenAction.OnCopyClicked(
+                        copyContent = copyToClipboard
+                    )
+                )
             },
             modifier = Modifier.weight(1f),
-            leadingIcon  = {
+            leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.copy),
                     contentDescription = null,
