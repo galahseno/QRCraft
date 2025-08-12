@@ -1,4 +1,4 @@
-package utils
+package id.dev.home.presentation.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager
