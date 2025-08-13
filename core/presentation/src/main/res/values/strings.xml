@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="scan_result">Scan Result</string>
+    <string name="navigate_up">Navigate up</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+    <string name="share">Share</string>
+    <string name="copy">Copy</string>
     <string name="close_app">Close App</string>
     <string name="grant_access">Grant Access</string>
 </resources>

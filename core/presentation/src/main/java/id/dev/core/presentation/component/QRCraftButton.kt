@@ -42,8 +42,9 @@ fun QRCraftButton(
         }
         Text(
             text = buttonText,
-            color = buttonTextColor,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge.copy(
+                color = buttonTextColor,
+            )
         )
     }
 }
