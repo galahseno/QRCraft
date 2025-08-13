@@ -10,7 +10,6 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerHigh = surfaceHigher,
     onSurface = onSurface,
     onSurfaceVariant = onSurfaceAlt,
-    onPrimaryContainer = linkBg
 )
 
 @Composable

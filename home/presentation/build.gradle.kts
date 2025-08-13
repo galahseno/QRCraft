@@ -7,8 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.navigation.runtime.ktx)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.timber)
     implementation(libs.bundles.camerax)
     with(projects) {
