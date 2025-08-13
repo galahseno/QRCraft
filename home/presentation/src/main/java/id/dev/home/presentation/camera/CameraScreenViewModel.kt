@@ -32,6 +32,7 @@ class CameraScreenViewModel() : ViewModel() {
 
             is CameraScreenAction.OnScanResult -> handleScanResult(action.result)
             is CameraScreenAction.OnDismissErrorDialog -> handleDismissErrorDialog()
+            else -> TODO("Handle actions")
         }
     }
 

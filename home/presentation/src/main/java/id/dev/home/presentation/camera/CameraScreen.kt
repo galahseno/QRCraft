@@ -45,16 +45,17 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import id.dev.core.presentation.theme.QRCraftTheme
 import id.dev.core.presentation.theme.success
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.ObserveAsEvents
+import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.camera.component.dialog.CameraPermissionDialog
 import id.dev.home.presentation.camera.component.CameraPermissionHandler
 import id.dev.home.presentation.camera.component.CameraPreview
-import id.dev.home.presentation.camera.component.dialog.CameraPermissionDialog
 import id.dev.home.presentation.camera.component.dialog.LoadingDialog
 import id.dev.home.presentation.camera.component.dialog.ScanErrorDialog
-import id.dev.home.presentation.model.BarcodeResult
 import id.dev.home.presentation.utils.checkCameraPermissionAndRationale
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -62,7 +63,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CameraScreenRoot(
     onScanResult: (BarcodeResult) -> Unit,
-    viewModel: CameraScreenViewModel = koinViewModel(),
+    viewModel: CameraScreenViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -85,10 +86,10 @@ fun CameraScreen(
     state: CameraScreenState,
     onAction: (CameraScreenAction) -> Unit,
 ) {
-    val view = LocalView.current
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
+    val view = LocalView.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     var cutoutOffset by remember { mutableStateOf(Offset.Zero) }
     var cutoutSizePx by remember { mutableStateOf(IntSize.Zero) }
@@ -173,7 +174,6 @@ fun CameraScreen(
                     boundingBox = boundingBox
                 )
             }
-
             CameraOverlayWithCutout(
                 hasCameraPermission = state.hasCameraPermission,
                 cutoutOffsetState = cutoutOffset,
