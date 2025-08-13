@@ -5,11 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import id.dev.core.presentation.theme.QRCraftTheme
-import id.dev.home.presentation.camera.CameraScreenRoot
-import id.dev.home.presentation.model.BarcodeResult
-import kotlinx.serialization.json.Json
-import timber.log.Timber
+import id.dev.qrcraft.navigation.navs.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,19 +24,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             QRCraftTheme {
-                CameraScreenRoot(
-                    onScanResult = { barcodeResult ->
-                        // exclude the scan error since it will not reach until here
-                        if (barcodeResult !is BarcodeResult.ScanError) {
-                            //encode
-                            val result = Json.encodeToString(BarcodeResult.serializer(), barcodeResult)
-                            Timber.tag("ScanResult encode").d(result)
-                            //decode
-                            val decodedResult = Json.decodeFromString(BarcodeResult.serializer(), result)
-                            Timber.tag("ScanResult decode").d("$decodedResult")
-                        }
-                    }
-                )
+                val navController = rememberNavController()
+                AppNavigation(navController = navController)
             }
         }
     }
