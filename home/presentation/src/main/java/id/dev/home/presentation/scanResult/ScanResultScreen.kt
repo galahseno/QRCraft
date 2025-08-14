@@ -1,34 +1,29 @@
 package id.dev.home.presentation.scanResult
 
+import android.app.Activity
+import android.content.Intent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,112 +31,74 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.dev.core.presentation.R
 import id.dev.core.presentation.utils.DeviceConfiguration
-import id.dev.core.presentation.utils.ObserveAsEvents
 import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.scanResult.components.ActionButtonsLayout
 import id.dev.home.presentation.scanResult.components.QrCodeImageLayout
-import kotlinx.serialization.json.Json
+import id.dev.home.presentation.scanResult.components.ScanResultTopBar
 import org.koin.compose.viewmodel.koinViewModel
-import timber.log.Timber
 
 @Composable
 fun ScanResultScreenRoot(
-    barcodeResult: String,
-    onNavigateUp: () -> Unit = {},
-    onOpenLink: (String) -> Unit = {},
-    onShare: (String) -> Unit = {},
-    onCopyClicked: (String) -> Unit = {},
-    viewModel: ScanResultScreenViewModel = koinViewModel()
+    onNavigateUp: () -> Unit = {}, viewModel: ScanResultScreenViewModel = koinViewModel()
 ) {
-
-    ObserveAsEvents(viewModel.event) {
-        when (it) {
-            ScanResultScreenEvent.NavigateUp -> onNavigateUp()
-            is ScanResultScreenEvent.OpenLink -> onOpenLink(it.url)
-            is ScanResultScreenEvent.ShareContent -> onShare(it.share)
-            is ScanResultScreenEvent.CopyContent -> onCopyClicked(it.copy)
-        }
-    }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     ScanResultScreen(
-        onAction = viewModel::onAction,
-        barcodeResult = barcodeResult
-    )
+        barcodeResult = state.barcodeResult, onAction = { action ->
+            when (action) {
+                ScanResultScreenAction.OnNavigateUpClicked -> onNavigateUp()
+            }
+
+            viewModel.onAction(action)
+        })
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanResultScreen(
+    barcodeResult: BarcodeResult?,
     onAction: (ScanResultScreenAction) -> Unit,
-    barcodeResult: String
 ) {
-    val parsedResult = remember(barcodeResult) {
-        try {
-            if (barcodeResult.isNotEmpty()) {
-                Json.decodeFromString<BarcodeResult>(barcodeResult)
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            Timber.tag("ScanResultScreen").e(e, "Failed to parse barcode result")
-            null
-        }
-    }
+    val context = LocalContext.current
+    val view = LocalView.current
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.scan_result),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = { onAction(ScanResultScreenAction.OnNavigateUpClicked) }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.navigate_up),
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    navigationIconContentColor = Color.White,
-                    titleContentColor = Color.White,
-                )
+            ScanResultTopBar(
+                onBackClick = {
+                    onAction(ScanResultScreenAction.OnNavigateUpClicked)
+                }
             )
         }
     ) { innerPadding ->
+        if (barcodeResult == null) return@Scaffold
 
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.onSurface)
                 .fillMaxSize()
                 .padding(innerPadding)
-                .consumeWindowInsets(WindowInsets.navigationBars)
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter
         ) {
-            when (parsedResult) {
-                // DONE
+            when (barcodeResult) {
                 is BarcodeResult.Link -> {
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = parsedResult.url,
-                        contentText = {
+                        result = barcodeResult, resultText = barcodeResult.url, contentText = {
                             Text(
-                                text = parsedResult.url,
+                                text = barcodeResult.url,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 ),
@@ -152,29 +109,28 @@ fun ScanResultScreen(
                                     )
                                     .padding(all = 4.dp)
                                     .clickable {
-                                        onAction(ScanResultScreenAction.OnLinkClicked(link = parsedResult.url))
-                                    }
-                            )
-                        }
-                    )
+                                        val intent =
+                                            Intent(Intent.ACTION_VIEW, barcodeResult.url.toUri())
+                                        context.startActivity(intent)
+                                    })
+                        })
                 }
-                // DONE
+
                 is BarcodeResult.Text -> {
                     var expanded by remember { mutableStateOf(false) }
+
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = parsedResult.content,
+                        result = barcodeResult,
+                        resultText = barcodeResult.content,
                         contentText = {
                             Text(
-                                text = parsedResult.content,
+                                text = barcodeResult.content,
                                 style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    lineHeight = 20.sp
+                                    color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
                                 modifier = Modifier
                                     .width(480.dp)
+                                    .animateContentSize()
                                     .padding(bottom = 4.dp)
                                     .align(alignment = Alignment.TopStart),
                                 overflow = TextOverflow.Ellipsis,
@@ -183,28 +139,33 @@ fun ScanResultScreen(
                         },
                         collapsibleTextButton = {
                             Text(
-                                text = if (!expanded) stringResource(R.string.show_more) else stringResource(R.string.show_less),
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    color = if (!expanded) MaterialTheme.colorScheme.onSurfaceVariant else Color(0xFF8C99A2)
+                                text = if (!expanded) stringResource(R.string.show_more) else stringResource(
+                                    R.string.show_less
                                 ),
-                                modifier = Modifier.fillMaxWidth().align(Alignment.TopStart).clickable {
-                                    expanded = !expanded
-                                }
-                            )
-                        }
-                    )
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                    color = if (!expanded) MaterialTheme.colorScheme.onSurfaceVariant else Color(
+                                        0xFF8C99A2
+                                    )
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.TopStart)
+                                    .clickable(
+                                        interactionSource = null, indication = null
+                                    ) {
+                                        expanded = !expanded
+                                    })
+                        })
                 }
-                // DONE
+
                 is BarcodeResult.Contact -> {
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = "${parsedResult::class.java.simpleName}: \n Name → ${parsedResult.name} \n Email → ${parsedResult.email} \n Phone number → ${parsedResult.phone}",
+                        result = barcodeResult,
+                        resultText = "${barcodeResult::class.java.simpleName}: \n Name → ${barcodeResult.name} \n Email → ${barcodeResult.email} \n Phone number → ${barcodeResult.phone}",
                         contentText = {
                             Column {
                                 Text(
-                                    text = parsedResult.name,
+                                    text = barcodeResult.name,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -214,7 +175,7 @@ fun ScanResultScreen(
                                         .align(alignment = Alignment.CenterHorizontally)
                                 )
                                 Text(
-                                    text = parsedResult.email,
+                                    text = barcodeResult.email,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -224,7 +185,7 @@ fun ScanResultScreen(
                                         .align(alignment = Alignment.CenterHorizontally)
                                 )
                                 Text(
-                                    text = parsedResult.phone,
+                                    text = barcodeResult.phone,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -237,59 +198,45 @@ fun ScanResultScreen(
                         },
                     )
                 }
-                // DONE
+
                 is BarcodeResult.Geo -> {
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = "${parsedResult::class.java.simpleName}: \n Latitude → ${parsedResult.lat} \n Longitude → ${parsedResult.lng}",
+                        result = barcodeResult,
+                        resultText = "${barcodeResult::class.java.simpleName}: \n Latitude → ${barcodeResult.lat} \n Longitude → ${barcodeResult.lng}",
                         contentText = {
                             Text(
-                                text = parsedResult.lat.toString() + "," + parsedResult.lng.toString(),
+                                text = barcodeResult.lat.toString() + "," + barcodeResult.lng.toString(),
                                 style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    lineHeight = 20.sp
+                                    color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
                                 modifier = Modifier
                                     .padding(bottom = 4.dp)
                                     .align(alignment = Alignment.Center)
                             )
-                        }
-                    )
+                        })
                 }
-                // DONE
+
                 is BarcodeResult.Phone -> {
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = parsedResult.number,
-                        contentText = {
+                        result = barcodeResult, resultText = barcodeResult.number, contentText = {
                             Text(
-                                text = parsedResult.number,
+                                text = barcodeResult.number,
                                 style = MaterialTheme.typography.bodyLarge.copy(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    lineHeight = 20.sp
+                                    color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
                                 modifier = Modifier
                                     .padding(bottom = 4.dp)
                                     .align(alignment = Alignment.Center)
                             )
-                        }
-                    )
+                        })
                 }
-                // DONE
+
                 is BarcodeResult.Wifi -> {
                     ScanResultCard(
-                        modifier = Modifier.align(Alignment.Center),
-                        result = parsedResult,
-                        onAction = onAction,
-                        resultText = parsedResult.ssid,
-                        contentText = {
+                        result = barcodeResult, resultText = barcodeResult.ssid, contentText = {
                             Column {
                                 Text(
-                                    text = parsedResult.ssid,
+                                    text = "SSID: ${barcodeResult.ssid}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -300,7 +247,7 @@ fun ScanResultScreen(
                                 )
 
                                 Text(
-                                    text = parsedResult.password,
+                                    text = "Password: ${barcodeResult.password}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -312,7 +259,7 @@ fun ScanResultScreen(
                                 )
 
                                 Text(
-                                    text = parsedResult.encryptionType,
+                                    text = "Encryption type: ${barcodeResult.encryptionType}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -322,48 +269,59 @@ fun ScanResultScreen(
                                         .align(alignment = Alignment.CenterHorizontally)
                                 )
                             }
-                        }
-                    )
+                        })
                 }
+
                 is BarcodeResult.ScanError -> {}
-                null -> {}
             }
         }
     }
+
+    SideEffect {
+        val window = (context as? Activity)?.window
+        if (!view.isInEditMode && window != null) {
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+                false
+        }
+    }
 }
+
 @Composable
 fun ScanResultCard(
     modifier: Modifier = Modifier,
     result: BarcodeResult,
-    onAction: (ScanResultScreenAction) -> Unit,
     resultText: String,
     contentText: (@Composable (() -> Unit))? = null,
     collapsibleTextButton: (@Composable (() -> Unit))? = null
 ) {
-
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
     val cardWidth = when (deviceConfiguration) {
         DeviceConfiguration.MOBILE_PORTRAIT -> 380.dp
-        DeviceConfiguration.TABLET_PORTRAIT,
-        DeviceConfiguration.TABLET_LANDSCAPE,
+        DeviceConfiguration.TABLET_PORTRAIT, DeviceConfiguration.TABLET_LANDSCAPE,
         DeviceConfiguration.DESKTOP -> 480.dp
+
         else -> 380.dp
     }
 
     Box(
         modifier = modifier
+            .padding(top = 32.dp)
     ) {
         Card(
-            modifier = Modifier.width(cardWidth),
+            modifier = Modifier
+                .width(cardWidth)
+                .padding(top = 80.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             )
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(100.dp))
@@ -391,10 +349,12 @@ fun ScanResultCard(
                 ActionButtonsLayout(
                     share = "Link: $resultText",
                     copyToClipboard = resultText,
-                    onAction = onAction
                 )
             }
         }
-        QrCodeImageLayout()
+
+        QrCodeImageLayout(
+            text = resultText,
+        )
     }
 }

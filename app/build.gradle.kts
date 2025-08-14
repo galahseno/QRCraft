@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.kotlinx.serialization)
     implementation(libs.timber)
+    implementation(libs.bundles.koin.compose)
 
     with(projects) {
         implementation(core.data)
