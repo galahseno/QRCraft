@@ -1,44 +1,52 @@
 package id.dev.home.presentation.scanResult
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import id.dev.home.presentation.model.BarcodeResult
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import timber.log.Timber
 
-class ScanResultScreenViewModel: ViewModel() {
+class ScanResultScreenViewModel(
+    savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+    private val barcodeResult = savedStateHandle.get<String>(BARCODE_RESULT) ?: ""
 
-    private val _event = MutableSharedFlow<ScanResultScreenEvent>()
-    val event = _event.asSharedFlow()
+    private val _state = MutableStateFlow(ScanResultScreenState())
+    val state = _state.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val parsedResult = try {
+                if (barcodeResult.isNotEmpty()) {
+                    Json.decodeFromString<BarcodeResult>(barcodeResult)
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Timber.tag("ScanResultScreen").e(e, "Failed to parse barcode result")
+                null
+            }
+
+            _state.update {
+                it.copy(
+                    barcodeResult = parsedResult,
+                )
+            }
+        }
+    }
 
     fun onAction(action: ScanResultScreenAction) {
         when (action) {
-            ScanResultScreenAction.OnNavigateUpClicked -> {
-                viewModelScope.launch {
-                    _event.emit(ScanResultScreenEvent.NavigateUp)
-                }
-            }
-            is ScanResultScreenAction.OnLinkClicked -> handleLinkClicked(action.link)
-            is ScanResultScreenAction.OnShareClicked -> handleShareClicked(action.shareContent)
-            is ScanResultScreenAction.OnCopyClicked -> handleCopyClicked(action.copyContent)
+            else -> Unit
         }
     }
 
-    private fun handleLinkClicked(link: String) {
-        viewModelScope.launch {
-            _event.emit(ScanResultScreenEvent.OpenLink(link))
-        }
-    }
-
-    private fun handleCopyClicked(copyContent: String) {
-        viewModelScope.launch {
-            _event.emit(ScanResultScreenEvent.CopyContent(copyContent))
-        }
-    }
-
-    private fun handleShareClicked(shareContent: String) {
-        viewModelScope.launch {
-            _event.emit(ScanResultScreenEvent.ShareContent(shareContent))
-        }
+    companion object {
+        private const val BARCODE_RESULT = "barcodeResult"
     }
 }

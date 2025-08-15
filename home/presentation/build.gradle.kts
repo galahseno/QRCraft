@@ -11,6 +11,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.timber)
     implementation(libs.bundles.camerax)
+    implementation(libs.coil.compose)
+    implementation(libs.zxing.core)
+
     with(projects) {
         implementation(core.presentation)
         implementation(core.domain)

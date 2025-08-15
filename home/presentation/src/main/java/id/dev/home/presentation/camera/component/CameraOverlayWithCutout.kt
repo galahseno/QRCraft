@@ -32,9 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
 import id.dev.core.presentation.theme.primary
+import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.home.presentation.R
 
 @Composable
@@ -52,6 +51,8 @@ fun CameraOverlayWithCutout(
     overlayColor: Color = Color.Black.copy(alpha = 0.6f)
 ) {
     val density = LocalDensity.current
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -63,14 +64,16 @@ fun CameraOverlayWithCutout(
             drawRect(color = overlayColor)
 
             val cutoutPath = Path().apply {
+                val scanRect = Rect(
+                    cutoutOffsetState.x,
+                    cutoutOffsetState.y,
+                    cutoutOffsetState.x + cutoutSizeState.width,
+                    cutoutOffsetState.y + cutoutSizeState.height
+                )
+
                 addRoundRect(
                     RoundRect(
-                        rect = Rect(
-                            cutoutOffsetState.x,
-                            cutoutOffsetState.y,
-                            cutoutOffsetState.x + cutoutSizeState.width,
-                            cutoutOffsetState.y + cutoutSizeState.height
-                        ),
+                        rect = scanRect,
                         cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx)
                     )
                 )
@@ -235,7 +238,10 @@ fun CameraOverlayWithCutout(
             Text(
                 text = stringResource(R.string.point_camera_qr),
                 color = Color.White,
-                style = MaterialTheme.typography.titleSmall
+                style = when (deviceConfiguration) {
+                    DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE -> MaterialTheme.typography.titleSmall
+                    else -> MaterialTheme.typography.titleMedium
+                }
             )
 
             Box(

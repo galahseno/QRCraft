@@ -1,6 +1,8 @@
 [versions]
 agp = "8.11.1"
 androidTools = "31.12.0"
+coilCompose = "2.7.0"
+zxing-core = "3.5.3"
 kotlin = "2.2.0"
 lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
@@ -43,6 +45,8 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-core" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }

@@ -1,4 +1,4 @@
-package id.dev.home.presentation.scanResult
+package id.dev.home.presentation.scanResult.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -9,18 +9,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.R
 import id.dev.core.presentation.component.QRCraftButton
+import id.dev.home.presentation.utils.copyToClipboard
+import id.dev.home.presentation.utils.share
 
 @Composable
 internal fun ActionButtonsLayout(
     share: String,
     copyToClipboard: String,
-    onAction: (ScanResultScreenAction) -> Unit
 ) {
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -30,11 +33,7 @@ internal fun ActionButtonsLayout(
             buttonText = stringResource(R.string.share),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
-                onAction(
-                    ScanResultScreenAction.OnShareClicked(
-                        shareContent = share
-                    )
-                )
+                context.share(share)
             },
             modifier = Modifier.weight(1f),
             leadingIcon = {
@@ -50,11 +49,7 @@ internal fun ActionButtonsLayout(
             buttonText = stringResource(R.string.copy),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
-                onAction(
-                    ScanResultScreenAction.OnCopyClicked(
-                        copyContent = copyToClipboard
-                    )
-                )
+                context.copyToClipboard(copyToClipboard)
             },
             modifier = Modifier.weight(1f),
             leadingIcon = {
