@@ -12,4 +12,10 @@ sealed interface Screens {
     data class ScanResultScreen(
         val barcodeResult: String
     )
+
+    @Serializable
+    data object CreateQrScreen
+
+    @Serializable
+    data object HistoryQrScreen
 }

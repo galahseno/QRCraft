@@ -93,7 +93,7 @@ fun CameraScreen(
     var cutoutOffset by remember { mutableStateOf(Offset.Zero) }
     var cutoutSizePx by remember { mutableStateOf(IntSize.Zero) }
 
-    val boundingBox: Rect? = remember(cutoutSizePx, cutoutSizePx) {
+    val scanRect: Rect? = remember(cutoutOffset, cutoutSizePx) {
         if (cutoutSizePx.width > 0 && cutoutSizePx.height > 0) {
             Rect(
                 cutoutOffset.x,
@@ -101,9 +101,7 @@ fun CameraScreen(
                 cutoutOffset.x + cutoutSizePx.width,
                 cutoutOffset.y + cutoutSizePx.height
             )
-        } else {
-            null
-        }
+        } else null
     }
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
@@ -170,16 +168,17 @@ fun CameraScreen(
                     onQrCodeScanned = { result ->
                         onAction(CameraScreenAction.OnScanResult(result))
                     },
-                    boundingBox = boundingBox
+                    boundingBox = scanRect
                 )
             }
 
             CameraOverlayWithCutout(
                 hasCameraPermission = state.hasCameraPermission,
-                cutoutOffsetState = cutoutOffset,
-                cutoutSizeState = cutoutSizePx,
+                scanRect = scanRect,
                 cutoutSize = when (deviceConfiguration) {
-                    DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE -> 300.dp
+                    DeviceConfiguration.MOBILE_PORTRAIT-> 300.dp
+                    DeviceConfiguration.MOBILE_LANDSCAPE -> 200.dp
+                    DeviceConfiguration.TABLET_LANDSCAPE -> 400.dp
                     else -> 500.dp
                 },
                 cutoutShape = when (deviceConfiguration) {

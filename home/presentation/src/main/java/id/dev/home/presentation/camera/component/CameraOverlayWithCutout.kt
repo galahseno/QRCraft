@@ -1,9 +1,10 @@
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.theme.primary
@@ -39,8 +41,7 @@ import id.dev.home.presentation.R
 @Composable
 fun CameraOverlayWithCutout(
     hasCameraPermission: Boolean,
-    cutoutOffsetState: Offset,
-    cutoutSizeState: IntSize,
+    scanRect: Rect?,
     onCutOutOffsetChanged: (Offset) -> Unit,
     onCutOutSizeChanged: (IntSize) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,23 +58,19 @@ fun CameraOverlayWithCutout(
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
             val cornerRadiusPx = cutoutShape.topStart
                 .toPx(Size(cutoutSize.toPx(), cutoutSize.toPx()), density)
 
             drawRect(color = overlayColor)
+            val rect = scanRect ?: return@Canvas
 
             val cutoutPath = Path().apply {
-                val scanRect = Rect(
-                    cutoutOffsetState.x,
-                    cutoutOffsetState.y,
-                    cutoutOffsetState.x + cutoutSizeState.width,
-                    cutoutOffsetState.y + cutoutSizeState.height
-                )
-
                 addRoundRect(
                     RoundRect(
-                        rect = scanRect,
+                        rect = rect,
                         cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx)
                     )
                 )
@@ -85,8 +82,13 @@ fun CameraOverlayWithCutout(
                     color = Color.Transparent,
                     blendMode = BlendMode.Clear
                 )
+
                 val strokeWidthPx = strokeWidth.toPx()
                 val cornerLength = cornerLength.toPx()
+                val left = rect.left
+                val top = rect.top
+                val right = rect.right
+                val bottom = rect.bottom
 
                 // TOP LEFT
                 drawArc(
@@ -94,21 +96,21 @@ fun CameraOverlayWithCutout(
                     startAngle = 180f,
                     sweepAngle = 90f,
                     useCenter = false,
-                    topLeft = Offset(cutoutOffsetState.x, cutoutOffsetState.y),
+                    topLeft = Offset(left, top),
                     size = Size(cornerRadiusPx * 2, cornerRadiusPx * 2),
                     style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(cutoutOffsetState.x + cornerRadiusPx, cutoutOffsetState.y),
-                    end = Offset(cutoutOffsetState.x + cornerLength, cutoutOffsetState.y),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(left + cornerRadiusPx, top),
+                    Offset(left + cornerLength, top),
+                    strokeWidthPx
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(cutoutOffsetState.x, cutoutOffsetState.y + cornerRadiusPx),
-                    end = Offset(cutoutOffsetState.x, cutoutOffsetState.y + cornerLength),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(left, top + cornerRadiusPx),
+                    Offset(left, top + cornerLength),
+                    strokeWidthPx
                 )
 
                 // TOP RIGHT
@@ -117,36 +119,21 @@ fun CameraOverlayWithCutout(
                     startAngle = 270f,
                     sweepAngle = 90f,
                     useCenter = false,
-                    topLeft = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerRadiusPx * 2,
-                        cutoutOffsetState.y
-                    ),
+                    topLeft = Offset(right - cornerRadiusPx * 2, top),
                     size = Size(cornerRadiusPx * 2, cornerRadiusPx * 2),
                     style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerRadiusPx,
-                        cutoutOffsetState.y
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerLength,
-                        cutoutOffsetState.y
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(right - cornerRadiusPx, top),
+                    Offset(right - cornerLength, top),
+                    strokeWidthPx
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx(),
-                        cutoutOffsetState.y + cornerRadiusPx
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx(),
-                        cutoutOffsetState.y + cornerLength
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(right, top + cornerRadiusPx),
+                    Offset(right, top + cornerLength),
+                    strokeWidthPx
                 )
 
                 // BOTTOM LEFT
@@ -155,36 +142,21 @@ fun CameraOverlayWithCutout(
                     startAngle = 90f,
                     sweepAngle = 90f,
                     useCenter = false,
-                    topLeft = Offset(
-                        cutoutOffsetState.x,
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerRadiusPx * 2
-                    ),
+                    topLeft = Offset(left, bottom - cornerRadiusPx * 2),
                     size = Size(cornerRadiusPx * 2, cornerRadiusPx * 2),
                     style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x,
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerRadiusPx
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x,
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerLength
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(left, bottom - cornerRadiusPx),
+                    Offset(left, bottom - cornerLength),
+                    strokeWidthPx
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x + cornerRadiusPx,
-                        cutoutOffsetState.y + cutoutSize.toPx()
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x + cornerLength,
-                        cutoutOffsetState.y + cutoutSize.toPx()
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(left + cornerRadiusPx, bottom),
+                    Offset(left + cornerLength, bottom),
+                    strokeWidthPx
                 )
 
                 // BOTTOM RIGHT
@@ -193,60 +165,67 @@ fun CameraOverlayWithCutout(
                     startAngle = 0f,
                     sweepAngle = 90f,
                     useCenter = false,
-                    topLeft = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerRadiusPx * 2,
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerRadiusPx * 2
-                    ),
+                    topLeft = Offset(right - cornerRadiusPx * 2, bottom - cornerRadiusPx * 2),
                     size = Size(cornerRadiusPx * 2, cornerRadiusPx * 2),
                     style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx(),
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerRadiusPx
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx(),
-                        cutoutOffsetState.y + cutoutSize.toPx() - cornerLength
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(right, bottom - cornerRadiusPx),
+                    Offset(right, bottom - cornerLength),
+                    strokeWidthPx
                 )
                 drawLine(
-                    color = primary,
-                    start = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerRadiusPx,
-                        cutoutOffsetState.y + cutoutSize.toPx()
-                    ),
-                    end = Offset(
-                        cutoutOffsetState.x + cutoutSize.toPx() - cornerLength,
-                        cutoutOffsetState.y + cutoutSize.toPx()
-                    ),
-                    strokeWidth = strokeWidthPx
+                    primary,
+                    Offset(right - cornerRadiusPx, bottom),
+                    Offset(right - cornerLength, bottom),
+                    strokeWidthPx
                 )
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(
-                16.dp,
-                alignment = Alignment.CenterVertically
-            ),
-            horizontalAlignment = Alignment.CenterHorizontally
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize()
         ) {
+            val density = LocalDensity.current
+            val parentHeightPx = this.constraints.maxHeight.toFloat()
+
+            val centerYFraction = when (deviceConfiguration) {
+                DeviceConfiguration.MOBILE_LANDSCAPE -> 0.4f
+                else -> 0.5f
+            }
+
+            val textOffset = when (deviceConfiguration) {
+                DeviceConfiguration.MOBILE_LANDSCAPE, DeviceConfiguration.MOBILE_PORTRAIT -> 48.dp
+                else -> 64.dp
+            }
+
+            val cutoutPx = with(density) { cutoutSize.toPx() }
+            val targetCenterY = parentHeightPx * centerYFraction
+            val yOffsetPx = (targetCenterY - (cutoutPx / 2f))
+                .toInt()
+                .coerceAtLeast(0)
+
             Text(
                 text = stringResource(R.string.point_camera_qr),
                 color = Color.White,
                 style = when (deviceConfiguration) {
-                    DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE -> MaterialTheme.typography.titleSmall
+                    DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE ->
+                        MaterialTheme.typography.titleSmall
+
                     else -> MaterialTheme.typography.titleMedium
-                }
+                },
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .offset { IntOffset(x = 0, y = yOffsetPx - textOffset.toPx().toInt()) }
+                    .padding(top = 16.dp)
             )
 
             Box(
                 modifier = Modifier
                     .size(cutoutSize)
+                    .align(Alignment.TopCenter)
+                    .offset { IntOffset(x = 0, y = yOffsetPx) }
                     .clip(cutoutShape)
                     .onGloballyPositioned { coords ->
                         onCutOutOffsetChanged(coords.positionInParent())
@@ -264,5 +243,4 @@ fun CameraOverlayWithCutout(
             }
         }
     }
-
 }
