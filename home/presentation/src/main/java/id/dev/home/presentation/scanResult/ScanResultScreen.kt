@@ -51,7 +51,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ScanResultScreenRoot(
-    onNavigateUp: () -> Unit = {}, viewModel: ScanResultScreenViewModel = koinViewModel()
+    onNavigateUp: () -> Unit = {},
+    viewModel: ScanResultScreenViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -62,7 +63,8 @@ fun ScanResultScreenRoot(
             }
 
             viewModel.onAction(action)
-        })
+        }
+    )
 }
 
 @Composable
