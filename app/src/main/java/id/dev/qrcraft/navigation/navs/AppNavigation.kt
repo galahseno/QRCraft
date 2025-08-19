@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import id.dev.home.presentation.camera.CameraScreenRoot
 import id.dev.home.presentation.create_qr.CreateQRRoot
+import id.dev.home.presentation.create_qr.QrTypeIdentifier
+import id.dev.home.presentation.create_qr_generator.CreateQrGeneratorRoot
 import id.dev.home.presentation.model.BarcodeResult
 import id.dev.home.presentation.scanResult.ScanResultScreenRoot
 import id.dev.qrcraft.navigation.screens.Screens
@@ -46,7 +48,24 @@ fun AppNavigation(
             )
         }
         composable<Screens.CreateQrScreen> {
-            CreateQRRoot()
+            CreateQRRoot(
+                onNavigateToGenerator = { qrTypeIdentifier ->
+                    // Serialize the simple enum instead of complex QrCodeTypes
+                    val result = Json.encodeToString(QrTypeIdentifier.serializer(), qrTypeIdentifier)
+                    navController.navigate(
+                        route = Screens.CreateQrScreen(
+                            qrType = result
+                        )
+                    )
+                }
+            )
+        }
+        composable<Screens.GenerateQrScreen> {
+            CreateQrGeneratorRoot(
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+            )
         }
     }
 }

@@ -14,7 +14,12 @@ sealed interface Screens {
     )
 
     @Serializable
-    data object CreateQrScreen
+    data class CreateQrScreen(
+        val qrType: String
+    )
+
+    @Serializable
+    data object GenerateQrScreen
 
     @Serializable
     data object HistoryQrScreen

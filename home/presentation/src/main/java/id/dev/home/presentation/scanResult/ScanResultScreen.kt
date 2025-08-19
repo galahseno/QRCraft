@@ -61,7 +61,6 @@ fun ScanResultScreenRoot(
             when (action) {
                 ScanResultScreenAction.OnNavigateUpClicked -> onNavigateUp()
             }
-
             viewModel.onAction(action)
         }
     )
