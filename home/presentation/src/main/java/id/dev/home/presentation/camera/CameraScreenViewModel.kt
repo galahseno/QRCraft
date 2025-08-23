@@ -2,7 +2,7 @@ package id.dev.home.presentation.camera
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +44,7 @@ class CameraScreenViewModel() : ViewModel() {
         }
     }
 
-    private fun handleScanResult(barcodeResult: BarcodeResult?) {
+    private fun handleScanResult(qrTypes: QrTypes?) {
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -53,18 +53,18 @@ class CameraScreenViewModel() : ViewModel() {
             }
             delay(500) // simulate loading
 
-            when (barcodeResult) {
-                is BarcodeResult.ScanError, null -> {
+            when (qrTypes) {
+                is QrTypes.Error, null -> {
                     _state.update {
                         it.copy(
                             isScanError = true,
-                            errorMessage = barcodeResult?.message
+                            errorMessage = qrTypes?.message
                         )
                     }
                 }
 
                 else -> {
-                    _event.send(CameraScreenEvent.ScanResult(barcodeResult))
+                    _event.send(CameraScreenEvent.ScanResult(qrTypes))
                 }
             }
 

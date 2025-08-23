@@ -8,16 +8,17 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import id.dev.home.presentation.camera.CameraScreenAction
-import id.dev.home.presentation.model.BarcodeResult
-import androidx.core.graphics.createBitmap
+import id.dev.home.presentation.model.QrTypes
 
 fun ComponentActivity.checkCameraPermissionAndRationale(onAction: (CameraScreenAction) -> Unit) {
     val isGranted = ContextCompat.checkSelfPermission(
@@ -34,34 +35,34 @@ fun ComponentActivity.checkCameraPermissionAndRationale(onAction: (CameraScreenA
     )
 }
 
-fun Barcode.mapBarcodeToResult(): BarcodeResult? {
+fun Barcode.mapBarcodeToResult(): QrTypes? {
     return when (valueType) {
         Barcode.TYPE_CONTACT_INFO -> {
             val contact = contactInfo
             val name = contact?.name?.formattedName.orEmpty()
             val email = contact?.emails?.first()?.address.orEmpty()
             val phone = contact?.phones?.first()?.number.orEmpty()
-            BarcodeResult.Contact(name, email, phone)
+            QrTypes.Contact(name, email, phone)
         }
 
         Barcode.TYPE_GEO -> {
             val geo = geoPoint
             if (geo != null) {
-                BarcodeResult.Geo(geo.lat, geo.lng)
+                QrTypes.Geo(geo.lat, geo.lng)
             } else null
         }
 
         Barcode.TYPE_PHONE -> {
             val phone = phone
             if (phone != null) {
-                BarcodeResult.Phone(phone.number.orEmpty())
+                QrTypes.Phone(phone.number.orEmpty())
             } else null
         }
 
         Barcode.TYPE_URL -> {
             val url = url
             if (url != null) {
-                BarcodeResult.Link(url.url.orEmpty())
+                QrTypes.Link(url.url.orEmpty())
             } else null
         }
 
@@ -75,7 +76,7 @@ fun Barcode.mapBarcodeToResult(): BarcodeResult? {
                     else -> "UNKNOWN"
                 }
 
-                BarcodeResult.Wifi(
+                QrTypes.Wifi(
                     wifi.ssid.orEmpty(),
                     wifi.password.orEmpty(),
                     encryptionTypeString
@@ -84,7 +85,7 @@ fun Barcode.mapBarcodeToResult(): BarcodeResult? {
         }
 
         Barcode.TYPE_TEXT -> {
-            BarcodeResult.Text(rawValue.orEmpty())
+            QrTypes.Text(rawValue.orEmpty())
         }
 
         else -> null
@@ -134,4 +135,22 @@ fun generateQrBitmap(
     }
     bmp.setPixels(pixels, 0, size, 0, 0, size, size)
     return bmp
+}
+
+fun isValidPhoneNumber(phoneNumber: String): Boolean = Patterns.PHONE.matcher(phoneNumber).matches()
+
+fun isValidEmail(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+
+// this function was taken from internet. If you have better approach, feel free to modify it.
+fun isValidLatLng(latitude: Double, longitude: Double): Boolean {
+    // Check latitude validity
+    if (latitude < -90.0 || latitude > 90.0) {
+        return false
+    }
+    // Check longitude validity
+    if (longitude < -180.0 || longitude > 180.0) {
+        return false
+    }
+    // If both are within range, the coordinates are considered valid
+    return true
 }

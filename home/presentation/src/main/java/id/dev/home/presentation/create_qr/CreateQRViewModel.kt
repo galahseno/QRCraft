@@ -18,7 +18,6 @@ class CreateQRViewModel : ViewModel() {
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
-                /** Load initial data here **/
                 hasLoadedInitialData = true
             }
         }

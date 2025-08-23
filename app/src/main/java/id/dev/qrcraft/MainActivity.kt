@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -24,31 +26,44 @@ class MainActivity : ComponentActivity() {
         setContent {
             QRCraftTheme {
                 val navController = rememberNavController()
-
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+                val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+                val currentRoute = navBackStackEntry?.destination?.route ?: Screens.CameraScreen.toString()
 
+                when(navBackStackEntry?.destination?.route) {
+                    Screens.CameraScreen.route -> {
+                        bottomBarState.value = true
+                    }
+                    Screens.CreateQrScreen.route -> {
+                        bottomBarState.value = true
+                    }
+                    else -> {
+                        bottomBarState.value = false
+                    }
+                }
                 Scaffold(
                     containerColor = Color.Transparent,
                     contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
+
                         BottomNavBar(
-                            selectedRoute = currentRoute ?: Screens.CameraScreen.toString(),
+                            bottomBarState = bottomBarState,
+                            selectedRoute = currentRoute,
                             onHistoryClick = { /* Handle history click */ },
                             onScanClick = {
-                                navController.navigate(Screens.CameraScreen) {
+                                navController.navigate(Screens.CameraScreen.route) {
                                     launchSingleTop = true
                                     restoreState = true
-                                    popUpTo(Screens.CameraScreen) {
+                                    popUpTo(Screens.CameraScreen.route) {
                                         saveState = true
                                     }
                                 }
                             },
                             onPlusClick = {
-                                navController.navigate(Screens.CreateQrScreen) {
+                                navController.navigate(Screens.CreateQrScreen.route) {
                                     launchSingleTop = true
                                     restoreState = true
-                                    popUpTo(Screens.CameraScreen) {
+                                    popUpTo(Screens.CameraScreen.route) {
                                         saveState = true
                                     }
                                 }

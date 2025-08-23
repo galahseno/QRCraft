@@ -19,6 +19,7 @@ import id.dev.core.presentation.R
 
 @Composable
 fun ScanResultTopBar(
+    titleVal: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -26,7 +27,7 @@ fun ScanResultTopBar(
         modifier = modifier,
         title = {
             Text(
-                text = stringResource(R.string.scan_result),
+                text = titleVal,
                 style = MaterialTheme.typography.titleMedium
             )
         },

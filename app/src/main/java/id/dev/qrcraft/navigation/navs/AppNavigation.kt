@@ -4,14 +4,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import id.dev.core.presentation.R
 import id.dev.home.presentation.camera.CameraScreenRoot
 import id.dev.home.presentation.create_qr.CreateQRRoot
 import id.dev.home.presentation.create_qr.QrTypeIdentifier
 import id.dev.home.presentation.create_qr_generator.CreateQrGeneratorRoot
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.scanResult.ScanResultScreenRoot
 import id.dev.qrcraft.navigation.screens.Screens
 import kotlinx.serialization.json.Json
@@ -23,48 +27,67 @@ fun AppNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screens.CameraScreen,
+        startDestination = Screens.CameraScreen.route,
         modifier = Modifier.consumeWindowInsets(contentPadding)
     ) {
-        composable<Screens.CameraScreen> {
+        composable(Screens.CameraScreen.route) {
             CameraScreenRoot(
                 onScanResult = { barcodeResult ->
-                    if (barcodeResult !is BarcodeResult.ScanError) {
-                        val result = Json.encodeToString(BarcodeResult.serializer(), barcodeResult)
+                    if (barcodeResult !is QrTypes.Error) {
+                        val result = Json.encodeToString(QrTypes.serializer(), barcodeResult)
                         navController.navigate(
                             route = Screens.ScanResultScreen(
-                                barcodeResult = result
-                            )
+                                qrTypes = result,
+                                titleVal = "Scan Result"
+                            ).route
                         )
                     }
                 },
             )
         }
-        composable<Screens.ScanResultScreen> {
+        composable(
+            route = Screens.ScanResultScreen.ROUTE_PATTERN,
+            arguments = listOf(
+                navArgument("qrTypes") { type = NavType.StringType },
+                navArgument("titleVal") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
             ScanResultScreenRoot(
                 onNavigateUp = {
                     navController.navigateUp()
                 },
             )
         }
-        composable<Screens.CreateQrScreen> {
+        composable(Screens.CreateQrScreen.route) {
             CreateQRRoot(
                 onNavigateToGenerator = { qrTypeIdentifier ->
-                    // Serialize the simple enum instead of complex QrCodeTypes
                     val result = Json.encodeToString(QrTypeIdentifier.serializer(), qrTypeIdentifier)
                     navController.navigate(
-                        route = Screens.CreateQrScreen(
+                        route = Screens.GenerateQrScreen(
                             qrType = result
-                        )
+                        ).route
                     )
                 }
             )
         }
-        composable<Screens.GenerateQrScreen> {
+        composable(
+            route = Screens.GenerateQrScreen.ROUTE_PATTERN,
+            arguments = listOf(
+                navArgument("qrType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
             CreateQrGeneratorRoot(
                 onNavigateUp = {
                     navController.navigateUp()
                 },
+                onNavigateToPreview = { qr ->
+                    navController.navigate(
+                        route = Screens.ScanResultScreen(
+                            qrTypes = qr,
+                            titleVal = "Preview"
+                        ).route
+                    )
+                }
             )
         }
     }

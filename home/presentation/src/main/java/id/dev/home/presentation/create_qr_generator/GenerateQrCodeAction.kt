@@ -3,8 +3,6 @@ package id.dev.home.presentation.create_qr_generator
 sealed interface GenerateQrCodeAction {
     data object OnNavigateUpClicked : GenerateQrCodeAction
     data object OnGenerateQrIsClicked : GenerateQrCodeAction
-
-    // Input actions for different types
     data class OnTextChanged(val text: String) : GenerateQrCodeAction
     data class OnUrlChanged(val url: String) : GenerateQrCodeAction
     data class OnContactNameChanged(val name: String) : GenerateQrCodeAction

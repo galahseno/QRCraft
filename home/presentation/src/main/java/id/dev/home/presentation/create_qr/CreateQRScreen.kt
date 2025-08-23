@@ -20,24 +20,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.QRCraftTheme
+import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.ObserveAsEvents
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CreateQRRoot(
-    onNavigateToGenerator: (QrTypeIdentifier) -> Unit, // Changed parameter type
+    onNavigateToGenerator: (QrTypeIdentifier) -> Unit,
     viewModel: CreateQRViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -45,7 +49,7 @@ fun CreateQRRoot(
     ObserveAsEvents(viewModel.event) { event ->
         when (event) {
             is CreateQREvent.NavigateToQRGenerator -> {
-                onNavigateToGenerator(event.qrTypeIdentifier) // Updated property name
+                onNavigateToGenerator(event.qrTypeIdentifier)
             }
         }
     }
@@ -62,6 +66,10 @@ fun CreateQRScreen(
     state: CreateQRState,
     onAction: (CreateQRAction) -> Unit,
 ) {
+
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
+    val isLandscape = deviceConfiguration == DeviceConfiguration.MOBILE_LANDSCAPE
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -69,7 +77,7 @@ fun CreateQRScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Create QR",
+                        text = stringResource(R.string.create_qr),
                         style = MaterialTheme.typography.titleMedium
                     )
                 },
@@ -87,7 +95,7 @@ fun CreateQRScreen(
             contentAlignment = Alignment.Center
         ) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = if (isLandscape) GridCells.Fixed(3) else GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
@@ -99,10 +107,9 @@ fun CreateQRScreen(
                     CreateQRTypeCard(
                         qrType = state.availableTypes[index],
                         onClick = {
-                            // Now this works - passing the identifier instead of QrCodeTypes
                             onAction(
                                 CreateQRAction.SelectQRType(
-                                    state.availableTypes[index].identifier
+                                   state.availableTypes[index].identifier
                                 )
                             )
                         }
@@ -121,8 +128,7 @@ private fun CreateQRTypeCard(
         modifier = Modifier
             .padding(vertical = 4.dp, horizontal = 4.dp)
             .fillMaxWidth()
-            .height(108.dp)
-        ,
+            .height(108.dp),
         onClick = onClick,
     ) {
         Column(

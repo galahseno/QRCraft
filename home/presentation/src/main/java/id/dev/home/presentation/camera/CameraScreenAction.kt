@@ -1,6 +1,6 @@
 package id.dev.home.presentation.camera
 
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 
 sealed interface CameraScreenAction {
     data class SubmitCameraPermissionInfo(
@@ -8,6 +8,6 @@ sealed interface CameraScreenAction {
         val showCameraRationale: Boolean
     ) : CameraScreenAction
 
-    data class OnScanResult(val result: BarcodeResult?) : CameraScreenAction
+    data class OnScanResult(val result: QrTypes?) : CameraScreenAction
     data object OnDismissErrorDialog : CameraScreenAction
 }

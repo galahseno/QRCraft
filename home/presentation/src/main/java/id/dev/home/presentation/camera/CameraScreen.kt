@@ -54,14 +54,14 @@ import id.dev.home.presentation.camera.component.CameraPreview
 import id.dev.home.presentation.camera.component.dialog.CameraPermissionDialog
 import id.dev.home.presentation.camera.component.dialog.LoadingDialog
 import id.dev.home.presentation.camera.component.dialog.ScanErrorDialog
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.utils.checkCameraPermissionAndRationale
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CameraScreenRoot(
-    onScanResult: (BarcodeResult) -> Unit,
+    onScanResult: (QrTypes) -> Unit,
     viewModel: CameraScreenViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()

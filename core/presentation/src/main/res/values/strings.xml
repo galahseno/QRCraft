@@ -8,4 +8,24 @@
     <string name="copy">Copy</string>
     <string name="close_app">Close App</string>
     <string name="grant_access">Grant Access</string>
+    <string name="create_qr">Create QR</string>
+    <string name="generate_qr_code">Generate QR-Code</string>
+    <string name="error_no_qr_code_type_was_selected">Error: No QR type selected</string>
+    <string name="encryption_type">Encryption Type</string>
+    <string name="password">Password</string>
+    <string name="wi_fi_name">Wi-Fi SSID</string>
+    <string name="wi_fi_qr_code">Wi-Fi</string>
+    <string name="location_qr_code">Geolocation</string>
+    <string name="phone_qr_code">Phone Number</string>
+    <string name="contact_qr_code">Contact</string>
+    <string name="link_qr_code">Link</string>
+    <string name="text_qr_code">Text</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="name">Name</string>
+    <string name="enter_url">URL</string>
+    <string name="enter_text">Text</string>
+    <string name="preview">Preview</string>
 </resources>

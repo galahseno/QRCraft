@@ -43,7 +43,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.dev.core.presentation.R
 import id.dev.core.presentation.utils.DeviceConfiguration
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.scanResult.components.ActionButtonsLayout
 import id.dev.home.presentation.scanResult.components.QrCodeImageLayout
 import id.dev.home.presentation.scanResult.components.ScanResultTopBar
@@ -57,18 +57,20 @@ fun ScanResultScreenRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     ScanResultScreen(
-        barcodeResult = state.barcodeResult, onAction = { action ->
+        qrTypes = state.qrTypes, onAction = { action ->
             when (action) {
                 ScanResultScreenAction.OnNavigateUpClicked -> onNavigateUp()
             }
             viewModel.onAction(action)
-        }
+        },
+        topBarTitleVal = state.titleVal,
     )
 }
 
 @Composable
-fun ScanResultScreen(
-    barcodeResult: BarcodeResult?,
+internal fun ScanResultScreen(
+    topBarTitleVal:String,
+    qrTypes: QrTypes?,
     onAction: (ScanResultScreenAction) -> Unit,
 ) {
     val context = LocalContext.current
@@ -78,13 +80,14 @@ fun ScanResultScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             ScanResultTopBar(
+                titleVal = topBarTitleVal,
                 onBackClick = {
                     onAction(ScanResultScreenAction.OnNavigateUpClicked)
                 }
             )
         }
     ) { innerPadding ->
-        if (barcodeResult == null) return@Scaffold
+        if (qrTypes == null) return@Scaffold
 
         Box(
             modifier = Modifier
@@ -94,12 +97,12 @@ fun ScanResultScreen(
                 .verticalScroll(rememberScrollState()),
             contentAlignment = Alignment.TopCenter
         ) {
-            when (barcodeResult) {
-                is BarcodeResult.Link -> {
+            when (qrTypes) {
+                is QrTypes.Link -> {
                     ScanResultCard(
-                        result = barcodeResult, resultText = barcodeResult.url, contentText = {
+                        result = qrTypes, resultText = qrTypes.url, contentText = {
                             Text(
-                                text = barcodeResult.url,
+                                text = qrTypes.url,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface,
                                 ),
@@ -111,21 +114,21 @@ fun ScanResultScreen(
                                     .padding(all = 4.dp)
                                     .clickable {
                                         val intent =
-                                            Intent(Intent.ACTION_VIEW, barcodeResult.url.toUri())
+                                            Intent(Intent.ACTION_VIEW, qrTypes.url.toUri())
                                         context.startActivity(intent)
                                     })
                         })
                 }
 
-                is BarcodeResult.Text -> {
+                is QrTypes.Text -> {
                     var expanded by remember { mutableStateOf(false) }
 
                     ScanResultCard(
-                        result = barcodeResult,
-                        resultText = barcodeResult.content,
+                        result = qrTypes,
+                        resultText = qrTypes.content,
                         contentText = {
                             Text(
-                                text = barcodeResult.content,
+                                text = qrTypes.content,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
@@ -159,14 +162,14 @@ fun ScanResultScreen(
                         })
                 }
 
-                is BarcodeResult.Contact -> {
+                is QrTypes.Contact -> {
                     ScanResultCard(
-                        result = barcodeResult,
-                        resultText = "${barcodeResult::class.java.simpleName}: \n Name → ${barcodeResult.name} \n Email → ${barcodeResult.email} \n Phone number → ${barcodeResult.phone}",
+                        result = qrTypes,
+                        resultText = "${qrTypes::class.java.simpleName}: \n Name → ${qrTypes.name} \n Email → ${qrTypes.email} \n Phone number → ${qrTypes.phone}",
                         contentText = {
                             Column {
                                 Text(
-                                    text = barcodeResult.name,
+                                    text = qrTypes.name,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -176,7 +179,7 @@ fun ScanResultScreen(
                                         .align(alignment = Alignment.CenterHorizontally)
                                 )
                                 Text(
-                                    text = barcodeResult.email,
+                                    text = qrTypes.email,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -186,7 +189,7 @@ fun ScanResultScreen(
                                         .align(alignment = Alignment.CenterHorizontally)
                                 )
                                 Text(
-                                    text = barcodeResult.phone,
+                                    text = qrTypes.phone,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -200,13 +203,13 @@ fun ScanResultScreen(
                     )
                 }
 
-                is BarcodeResult.Geo -> {
+                is QrTypes.Geo -> {
                     ScanResultCard(
-                        result = barcodeResult,
-                        resultText = "${barcodeResult::class.java.simpleName}: \n Latitude → ${barcodeResult.lat} \n Longitude → ${barcodeResult.lng}",
+                        result = qrTypes,
+                        resultText = "${qrTypes::class.java.simpleName}: \n Latitude → ${qrTypes.lat} \n Longitude → ${qrTypes.lng}",
                         contentText = {
                             Text(
-                                text = barcodeResult.lat.toString() + "," + barcodeResult.lng.toString(),
+                                text = qrTypes.lat.toString() + "," + qrTypes.lng.toString(),
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
@@ -217,11 +220,11 @@ fun ScanResultScreen(
                         })
                 }
 
-                is BarcodeResult.Phone -> {
+                is QrTypes.Phone -> {
                     ScanResultCard(
-                        result = barcodeResult, resultText = barcodeResult.number, contentText = {
+                        result = qrTypes, resultText = qrTypes.number, contentText = {
                             Text(
-                                text = barcodeResult.number,
+                                text = qrTypes.number,
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = MaterialTheme.colorScheme.onSurface, lineHeight = 20.sp
                                 ),
@@ -232,12 +235,12 @@ fun ScanResultScreen(
                         })
                 }
 
-                is BarcodeResult.Wifi -> {
+                is QrTypes.Wifi -> {
                     ScanResultCard(
-                        result = barcodeResult, resultText = barcodeResult.ssid, contentText = {
+                        result = qrTypes, resultText = qrTypes.ssid, contentText = {
                             Column {
                                 Text(
-                                    text = "SSID: ${barcodeResult.ssid}",
+                                    text = "SSID: ${qrTypes.ssid}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -248,7 +251,7 @@ fun ScanResultScreen(
                                 )
 
                                 Text(
-                                    text = "Password: ${barcodeResult.password}",
+                                    text = "Password: ${qrTypes.password}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -260,7 +263,7 @@ fun ScanResultScreen(
                                 )
 
                                 Text(
-                                    text = "Encryption type: ${barcodeResult.encryptionType}",
+                                    text = "Encryption type: ${qrTypes.encryptionType}",
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurface,
                                         lineHeight = 20.sp
@@ -273,7 +276,7 @@ fun ScanResultScreen(
                         })
                 }
 
-                is BarcodeResult.ScanError -> {}
+                is QrTypes.Error -> {}
             }
         }
     }
@@ -288,9 +291,9 @@ fun ScanResultScreen(
 }
 
 @Composable
-fun ScanResultCard(
+internal fun ScanResultCard(
     modifier: Modifier = Modifier,
-    result: BarcodeResult,
+    result: QrTypes,
     resultText: String,
     contentText: (@Composable (() -> Unit))? = null,
     collapsibleTextButton: (@Composable (() -> Unit))? = null
@@ -348,7 +351,7 @@ fun ScanResultCard(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 ActionButtonsLayout(
-                    share = "Link: $resultText",
+                    share = resultText,
                     copyToClipboard = resultText,
                 )
             }
