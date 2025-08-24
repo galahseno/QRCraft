@@ -1,6 +1,7 @@
 
 package id.dev.home.presentation.create_qr
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,16 +23,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.QRCraftTheme
@@ -66,10 +71,12 @@ fun CreateQRScreen(
     state: CreateQRState,
     onAction: (CreateQRAction) -> Unit,
 ) {
-
+    val context = LocalContext.current
+    val view = LocalView.current
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
-    val isLandscape = deviceConfiguration == DeviceConfiguration.MOBILE_LANDSCAPE
+    val isLandscape = deviceConfiguration != DeviceConfiguration.MOBILE_PORTRAIT
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -116,6 +123,14 @@ fun CreateQRScreen(
                     )
                 }
             }
+        }
+    }
+
+    SideEffect {
+        val window = (context as? Activity)?.window
+        if (!view.isInEditMode && window != null) {
+            WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+                true
         }
     }
 }

@@ -6,7 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class QrTypeIdentifier { TEXT, LINK, CONTACT, PHONE, GEO, WIFI }
 
-@Serializable
 data class QRType(
     val title: String,
     val icon: Int,

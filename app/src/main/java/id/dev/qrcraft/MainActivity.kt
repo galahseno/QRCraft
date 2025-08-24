@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,19 +29,22 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-                val currentRoute = navBackStackEntry?.destination?.route ?: Screens.CameraScreen.toString()
+                val currentRoute =
+                    navBackStackEntry?.destination?.route ?: Screens.CameraScreen.toString()
 
-                when(navBackStackEntry?.destination?.route) {
-                    Screens.CameraScreen.route -> {
-                        bottomBarState.value = true
-                    }
-                    Screens.CreateQrScreen.route -> {
-                        bottomBarState.value = true
-                    }
-                    else -> {
-                        bottomBarState.value = false
+                LaunchedEffect(currentRoute) {
+                    when {
+                        currentRoute.contains(Screens.CreateQrScreen.toString())
+                                || currentRoute.contains(Screens.CameraScreen.toString()) -> {
+                            bottomBarState.value = true
+                        }
+
+                        else -> {
+                            bottomBarState.value = false
+                        }
                     }
                 }
+
                 Scaffold(
                     containerColor = Color.Transparent,
                     contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -51,19 +55,19 @@ class MainActivity : ComponentActivity() {
                             selectedRoute = currentRoute,
                             onHistoryClick = { /* Handle history click */ },
                             onScanClick = {
-                                navController.navigate(Screens.CameraScreen.route) {
+                                navController.navigate(Screens.CameraScreen) {
                                     launchSingleTop = true
                                     restoreState = true
-                                    popUpTo(Screens.CameraScreen.route) {
+                                    popUpTo(Screens.CameraScreen) {
                                         saveState = true
                                     }
                                 }
                             },
                             onPlusClick = {
-                                navController.navigate(Screens.CreateQrScreen.route) {
+                                navController.navigate(Screens.CreateQrScreen) {
                                     launchSingleTop = true
                                     restoreState = true
-                                    popUpTo(Screens.CameraScreen.route) {
+                                    popUpTo(Screens.CameraScreen) {
                                         saveState = true
                                     }
                                 }

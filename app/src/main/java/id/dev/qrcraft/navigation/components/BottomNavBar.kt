@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -30,10 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.R
-import id.dev.core.presentation.theme.QRCraftTheme
 import id.dev.core.presentation.theme.link
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.applyIf
@@ -166,20 +163,3 @@ fun BottomNavBar(
         }
     )
 }
-
-//@Preview(showBackground = true, backgroundColor = 0xFFF3F3F3)
-//@Composable
-//private fun BottomNavBarPreview() {
-//    QRCraftTheme {
-//        Box(Modifier.fillMaxSize()) {
-//            BottomNavBar(
-//                selectedRoute = Screens.CreateQrScreen.toString(),
-//                modifier = Modifier.align(Alignment.BottomCenter),
-//                onHistoryClick = {},
-//                onScanClick = {},
-//                onPlusClick = {},
-//                bottomBarState = MutableState(true)
-//            )
-//        }
-//    }
-//}
