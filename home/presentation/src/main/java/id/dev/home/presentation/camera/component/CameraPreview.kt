@@ -23,18 +23,18 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import id.dev.core.presentation.utils.UiText
 import id.dev.home.presentation.R
-import id.dev.home.presentation.model.BarcodeResult
+import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.utils.mapBarcodeToResult
 
 @Composable
 fun CameraPreview(
-    onQrCodeScanned: (BarcodeResult?) -> Unit,
+    onQrCodeScanned: (QrTypes?) -> Unit,
     boundingBox: Rect? = null
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    var lastScannedValue by remember { mutableStateOf<BarcodeResult?>(null) }
+    var lastScannedValue by remember { mutableStateOf<QrTypes?>(null) }
     var lastScanTime by remember { mutableLongStateOf(0L) }
     val scanCooldown = 2000L
 
@@ -90,7 +90,7 @@ fun CameraPreview(
                                 result?.let {
                                     onQrCodeScanned(result)
                                 } ?: onQrCodeScanned(
-                                    BarcodeResult.ScanError(
+                                    QrTypes.Error(
                                         UiText.StringResource(
                                             R.string.no_qr_codes
                                         )
@@ -100,7 +100,7 @@ fun CameraPreview(
                         }
                     } catch (t: Throwable) {
                         onQrCodeScanned(
-                            BarcodeResult.ScanError(
+                            QrTypes.Error(
                                 UiText.StringResource(
                                     R.string.analyzer_error,
                                     arrayOf(t.message ?: "Unknown")

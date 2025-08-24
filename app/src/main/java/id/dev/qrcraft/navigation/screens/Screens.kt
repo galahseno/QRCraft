@@ -6,16 +6,22 @@ import kotlinx.serialization.Serializable
 sealed interface Screens {
 
     @Serializable
-    data object CameraScreen
+    data object CameraScreen : Screens
 
     @Serializable
     data class ScanResultScreen(
-        val barcodeResult: String
-    )
+        val qrTypes: String,
+        val titleVal: String
+    ) : Screens
 
     @Serializable
-    data object CreateQrScreen
+    data object CreateQrScreen : Screens
 
     @Serializable
-    data object HistoryQrScreen
+    data class GenerateQrScreen(
+        val qrType: String
+    ) : Screens
+
+    @Serializable
+    data object HistoryQrScreen : Screens
 }
