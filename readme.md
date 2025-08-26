@@ -20,10 +20,14 @@ We are currently working in **milestone 1**
     - Green snackbar confirmation when permission granted.
     - Real-time QR code detection.
     - Automatic navigation to Scan Result screen.
-- **Scan Result Screen**
+- **Scan Result / Preview Screen**
     - Displays detected QR code content with type recognition.
     - Special handling for long text with “Show more” / “Show less” toggle.
     - Share and Copy action buttons.
+- **Create QR Screen**
+  - Six QR code types: Text, Link, Contact, Phone Number, Geolocation, Wi-Fi.
+  - Mobile layout: 3 rows × 2 buttons; Tablet layout: 2 rows × 3 buttons.
+  - Each button shows icon + label, navigates to input screen.
 - **Adaptive Layouts**
     - Mobile (≤ 600dp) and wider screen (≥ 600dp) designs implemented per Figma mockups.
 
@@ -44,7 +48,7 @@ We are currently working in **milestone 1**
 
 ## 🎥 Demo ##
 
-https://github.com/user-attachments/assets/1e82793f-7c60-4a92-9957-5217cdcf9ada
+https://github.com/user-attachments/assets/c6f9f8c4-dcf7-4471-b224-b135d087a5fa
 
 
 
@@ -66,7 +70,13 @@ https://github.com/user-attachments/assets/1e82793f-7c60-4a92-9957-5217cdcf9ada
 
 | Mobile                                                         | Tablet                                                          | 
 |----------------------------------------------------------------|-----------------------------------------------------------------|
-| <img src="assets/screenshots/result/mobile.png" width="600" /> | <img src="assets/screenshots/result/mobile.png" width="1200" /> | 
+| <img src="assets/screenshots/result/mobile.png" width="600" /> | <img src="assets/screenshots/result/tablet.png" width="1200" /> | 
+
+### Create QR Screen ###
+
+| Mobile                                                         | Tablet                                                          | 
+|----------------------------------------------------------------|-----------------------------------------------------------------|
+| <img src="assets/screenshots/create/mobile.png" width="600" /> | <img src="assets/screenshots/create/tablet.png" width="1200" /> | 
 
 ---
 

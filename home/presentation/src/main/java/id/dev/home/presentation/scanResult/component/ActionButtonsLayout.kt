@@ -1,4 +1,4 @@
-package id.dev.home.presentation.scanResult.components
+package id.dev.home.presentation.scanResult.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.R
-import id.dev.core.presentation.component.QRCraftButton
+import id.dev.core.presentation.component.QRCraftActionButton
 import id.dev.home.presentation.utils.copyToClipboard
 import id.dev.home.presentation.utils.share
 
@@ -29,7 +29,7 @@ internal fun ActionButtonsLayout(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        QRCraftButton(
+        QRCraftActionButton(
             buttonText = stringResource(R.string.share),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
@@ -45,7 +45,7 @@ internal fun ActionButtonsLayout(
                 )
             }
         )
-        QRCraftButton(
+        QRCraftActionButton(
             buttonText = stringResource(R.string.copy),
             buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {

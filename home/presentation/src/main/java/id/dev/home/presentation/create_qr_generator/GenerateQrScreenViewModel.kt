@@ -3,7 +3,7 @@ package id.dev.home.presentation.create_qr_generator
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.dev.home.presentation.create_qr.QrTypeIdentifier
+import id.dev.home.presentation.model.QrTypeIdentifier
 import id.dev.home.presentation.model.QrTypes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +24,7 @@ class GenerateQrScreenViewModel(
 
     private val _state = MutableStateFlow(
         GenerateQrScreenState(
-            qrTypeIdentifier = qrTypeIdentifier,
+            qrTypeIdentifier = qrTypeIdentifier ?: QrTypeIdentifier.TEXT,
             textInput = savedStateHandle[ON_TEXT_CHANGED] ?: "",
             urlInput = savedStateHandle[ON_URL_CHANGED] ?: "",
             contactName = savedStateHandle[ON_CONTACT_NAME_CHANGED] ?: "",
@@ -53,6 +53,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_TEXT_CHANGED] = action.text
             }
+
             is GenerateQrCodeAction.OnUrlChanged -> {
                 _state.update {
                     it.copy(
@@ -61,6 +62,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_URL_CHANGED] = action.url
             }
+
             is GenerateQrCodeAction.OnContactNameChanged -> {
                 _state.update {
                     it.copy(
@@ -69,6 +71,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_CONTACT_NAME_CHANGED] = action.name
             }
+
             is GenerateQrCodeAction.OnContactEmailChanged -> {
                 _state.update {
                     it.copy(
@@ -77,6 +80,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_CONTACT_EMAIL_CHANGED] = action.email
             }
+
             is GenerateQrCodeAction.OnContactPhoneChanged -> {
                 _state.update {
                     it.copy(
@@ -85,6 +89,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_CONTACT_PHONE_CHANGED] = action.phone
             }
+
             is GenerateQrCodeAction.OnPhoneNumberChanged -> {
                 _state.update {
                     it.copy(
@@ -93,6 +98,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_PHONE_NUMBER_CHANGED] = action.phone
             }
+
             is GenerateQrCodeAction.OnLatitudeChanged -> {
                 _state.update {
                     it.copy(
@@ -101,6 +107,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_LATITUDE_CHANGED] = action.lat
             }
+
             is GenerateQrCodeAction.OnLongitudeChanged -> {
                 _state.update {
                     it.copy(
@@ -109,6 +116,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_LONGITUDE_CHANGED] = action.lng
             }
+
             is GenerateQrCodeAction.OnWifiSSIDChanged -> {
                 _state.update {
                     it.copy(
@@ -117,6 +125,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_WIFI_SSID_CHANGED] = action.ssid
             }
+
             is GenerateQrCodeAction.OnWifiPasswordChanged -> {
                 _state.update {
                     it.copy(
@@ -125,6 +134,7 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_WIFI_PASSWORD_CHANGED] = action.password
             }
+
             is GenerateQrCodeAction.OnWifiEncryptionChanged -> {
                 _state.update {
                     it.copy(
@@ -133,21 +143,26 @@ class GenerateQrScreenViewModel(
                 }
                 savedStateHandle[ON_WIFI_ENCRYPTION_CHANGED] = action.encryption
             }
+
             is GenerateQrCodeAction.OnGenerateQrIsClicked -> {
                 generateQrCode()
             }
-            is GenerateQrCodeAction.OnNavigateUpClicked -> {
-                viewModelScope.launch {
-                    _events.send(GenerateQrCodeEvent.NavigateBack)
-                }
-            }
+
+            else -> Unit
         }
     }
+
     private fun generateQrCode() {
         val currentState = _state.value
         val qrCodeData = when (currentState.qrTypeIdentifier) {
-            QrTypeIdentifier.TEXT -> { QrTypes.Text(currentState.textInput) }
-            QrTypeIdentifier.LINK -> { QrTypes.Link(currentState.urlInput) }
+            QrTypeIdentifier.TEXT -> {
+                QrTypes.Text(currentState.textInput)
+            }
+
+            QrTypeIdentifier.LINK -> {
+                QrTypes.Link(currentState.urlInput)
+            }
+
             QrTypeIdentifier.CONTACT -> {
                 QrTypes.Contact(
                     name = currentState.contactName,
@@ -155,12 +170,17 @@ class GenerateQrScreenViewModel(
                     phone = currentState.contactPhone
                 )
             }
-            QrTypeIdentifier.PHONE -> { QrTypes.Phone(currentState.phoneNumber) }
+
+            QrTypeIdentifier.PHONE -> {
+                QrTypes.Phone(currentState.phoneNumber)
+            }
+
             QrTypeIdentifier.GEO -> {
                 val lat = currentState.latitude.toDoubleOrNull() ?: 0.0
                 val lng = currentState.longitude.toDoubleOrNull() ?: 0.0
                 QrTypes.Geo(lat, lng)
             }
+
             QrTypeIdentifier.WIFI -> {
                 QrTypes.Wifi(
                     ssid = currentState.wifiSSID,
@@ -168,6 +188,7 @@ class GenerateQrScreenViewModel(
                     encryptionType = currentState.wifiEncryption
                 )
             }
+
             null -> return
         }
 

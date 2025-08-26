@@ -1,4 +1,4 @@
-package id.dev.qrcraft.navigation.components
+package id.dev.core.presentation.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -34,19 +33,17 @@ import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.link
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.applyIf
-import id.dev.qrcraft.navigation.screens.Screens
 
 @Composable
-fun BottomNavBar(
-    bottomBarState: MutableState<Boolean>,
-    selectedRoute: String,
+fun QrCraftBottomBar(
+    bottomBarVisible: Boolean,
+    isCreateQrScreenActive: Boolean,
+    isHistoryScreenActive: Boolean,
     onHistoryClick: () -> Unit,
     onScanClick: () -> Unit,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val qRScreenActive = selectedRoute.contains(Screens.CreateQrScreen.toString())
-    val historyScreenActive = selectedRoute.contains(Screens.HistoryQrScreen.toString())
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
@@ -66,7 +63,7 @@ fun BottomNavBar(
         else -> 24.dp
     }
     AnimatedVisibility(
-        visible = bottomBarState.value,
+        visible = bottomBarVisible,
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
@@ -92,7 +89,7 @@ fun BottomNavBar(
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
-                                .applyIf(historyScreenActive) {
+                                .applyIf(isHistoryScreenActive) {
                                     background(
                                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                                         shape = CircleShape
@@ -110,7 +107,7 @@ fun BottomNavBar(
                                 imageVector = ImageVector.vectorResource(R.drawable.clock_refresh),
                                 contentDescription = null,
                                 modifier = Modifier.size(iconSize),
-                                tint = if (historyScreenActive) link else MaterialTheme.colorScheme.onSurface
+                                tint = if (isHistoryScreenActive) link else MaterialTheme.colorScheme.onSurface
                             )
                         }
 
@@ -119,7 +116,7 @@ fun BottomNavBar(
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
-                                .applyIf(qRScreenActive) {
+                                .applyIf(isCreateQrScreenActive) {
                                     background(
                                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                                         shape = CircleShape
@@ -137,7 +134,7 @@ fun BottomNavBar(
                                 imageVector = ImageVector.vectorResource(R.drawable.plus_circle),
                                 contentDescription = null,
                                 modifier = Modifier.size(iconSize),
-                                tint = if (qRScreenActive) link else MaterialTheme.colorScheme.onSurface
+                                tint = if (isCreateQrScreenActive) link else MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

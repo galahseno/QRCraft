@@ -1,4 +1,4 @@
-package id.dev.home.presentation.create_qr_generator.components
+package id.dev.home.presentation.create_qr_generator.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

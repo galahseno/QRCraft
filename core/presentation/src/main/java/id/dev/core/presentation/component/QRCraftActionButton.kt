@@ -21,7 +21,7 @@ import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.QRCraftTheme
 
 @Composable
-fun QRCraftButton(
+fun QRCraftActionButton(
     buttonText: String,
     buttonTextColor: Color,
     onClick: () -> Unit,
@@ -51,9 +51,9 @@ fun QRCraftButton(
 
 @Preview
 @Composable
-private fun QRCraftButtonPreview() {
+private fun QRCraftActionButtonPreview() {
     QRCraftTheme {
-        QRCraftButton(
+        QRCraftActionButton(
             buttonText = stringResource(R.string.close_app),
             buttonTextColor = MaterialTheme.colorScheme.error,
             onClick = {},

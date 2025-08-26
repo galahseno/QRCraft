@@ -36,10 +36,23 @@ class ScanResultScreenViewModel(
                 null
             }
 
-            _state.update {
-                it.copy(
-                    qrTypes = parsedResult,
-                )
+            parsedResult?.let { qrTypes ->
+                _state.update {
+                    it.copy(
+                        qrTypes = qrTypes,
+                        qrTitle = qrTypes::class.java.simpleName,
+                        content = when (qrTypes) {
+                            is QrTypes.Contact -> "${qrTypes.name}\n${qrTypes.email}\n${qrTypes.phone}"
+                            is QrTypes.Error -> ""
+                            is QrTypes.Geo -> "${qrTypes.lat}, ${qrTypes.lng}"
+                            is QrTypes.Link -> qrTypes.url
+                            is QrTypes.Phone -> qrTypes.number
+                            is QrTypes.Text -> qrTypes.content
+                            is QrTypes.Wifi -> "SSID: ${qrTypes.ssid}\nPassword: ${qrTypes.password}\nEncryption type: ${qrTypes.encryptionType}"
+                        },
+                    )
+                }
+
             }
         }
     }

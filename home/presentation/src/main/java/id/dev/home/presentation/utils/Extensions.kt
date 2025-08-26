@@ -141,16 +141,10 @@ fun isValidPhoneNumber(phoneNumber: String): Boolean = Patterns.PHONE.matcher(ph
 
 fun isValidEmail(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
-// this function was taken from internet. If you have better approach, feel free to modify it.
 fun isValidLatLng(latitude: Double, longitude: Double): Boolean {
-    // Check latitude validity
-    if (latitude < -90.0 || latitude > 90.0) {
-        return false
+    return when {
+        latitude < -90.0 || latitude > 90.0 -> false
+        longitude < -180.0 || longitude > 180.0 -> false
+        else -> true
     }
-    // Check longitude validity
-    if (longitude < -180.0 || longitude > 180.0) {
-        return false
-    }
-    // If both are within range, the coordinates are considered valid
-    return true
 }

@@ -10,6 +10,7 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainerHigh = surfaceHigher,
     onSurface = onSurface,
     onSurfaceVariant = onSurfaceAlt,
+    inverseOnSurface = onSurfaceDisabled,
     onPrimaryContainer = linkBg
 )
 
