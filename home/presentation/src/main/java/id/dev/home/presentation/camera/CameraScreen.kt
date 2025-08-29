@@ -1,6 +1,6 @@
 package id.dev.home.presentation.camera
 
-import CameraOverlayWithCutout
+import id.dev.home.presentation.camera.component.CameraOverlayWithCutout
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -40,12 +40,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import id.dev.core.presentation.theme.QRCraftTheme
 import id.dev.core.presentation.theme.success
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.ObserveAsEvents
@@ -244,16 +242,5 @@ fun CameraScreen(
             WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
                 !state.hasCameraPermission
         }
-    }
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    QRCraftTheme {
-        CameraScreen(
-            state = CameraScreenState(),
-            onAction = {}
-        )
     }
 }

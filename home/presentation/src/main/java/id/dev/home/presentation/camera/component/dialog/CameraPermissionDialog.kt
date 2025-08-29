@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import id.dev.core.presentation.component.QRCraftButton
+import id.dev.core.presentation.component.QRCraftActionButton
 import id.dev.core.presentation.theme.QRCraftTheme
 import id.dev.home.presentation.R
 
@@ -78,12 +78,12 @@ fun CameraPermissionDialog(
                         alignment = Alignment.CenterHorizontally
                     )
                 ) {
-                    QRCraftButton(
+                    QRCraftActionButton(
                         buttonText = stringResource(id.dev.core.presentation.R.string.close_app),
                         buttonTextColor = MaterialTheme.colorScheme.error,
                         onClick = onCloseClick
                     )
-                    QRCraftButton(
+                    QRCraftActionButton(
                         buttonText = stringResource(id.dev.core.presentation.R.string.grant_access),
                         buttonTextColor = MaterialTheme.colorScheme.onSurface,
                         onClick = onGrantAccessClick

@@ -1,4 +1,4 @@
-package id.dev.home.presentation.scanResult.components
+package id.dev.home.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxScope

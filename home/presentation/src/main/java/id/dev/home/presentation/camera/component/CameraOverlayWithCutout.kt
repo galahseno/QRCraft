@@ -1,3 +1,5 @@
+package id.dev.home.presentation.camera.component
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

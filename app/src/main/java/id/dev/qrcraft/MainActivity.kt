@@ -10,12 +10,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import id.dev.core.presentation.component.QrCraftBottomBar
 import id.dev.core.presentation.theme.QRCraftTheme
-import id.dev.qrcraft.navigation.components.BottomNavBar
 import id.dev.qrcraft.navigation.navs.AppNavigation
 import id.dev.qrcraft.navigation.screens.Screens
 
@@ -28,19 +29,19 @@ class MainActivity : ComponentActivity() {
             QRCraftTheme {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+                var bottomBarVisible by rememberSaveable { (mutableStateOf(true)) }
                 val currentRoute =
                     navBackStackEntry?.destination?.route ?: Screens.CameraScreen.toString()
 
                 LaunchedEffect(currentRoute) {
-                    when {
+                    bottomBarVisible = when {
                         currentRoute.contains(Screens.CreateQrScreen.toString())
                                 || currentRoute.contains(Screens.CameraScreen.toString()) -> {
-                            bottomBarState.value = true
+                            true
                         }
 
                         else -> {
-                            bottomBarState.value = false
+                            false
                         }
                     }
                 }
@@ -49,10 +50,10 @@ class MainActivity : ComponentActivity() {
                     containerColor = Color.Transparent,
                     contentWindowInsets = WindowInsets(0, 0, 0, 0),
                     bottomBar = {
-
-                        BottomNavBar(
-                            bottomBarState = bottomBarState,
-                            selectedRoute = currentRoute,
+                        QrCraftBottomBar(
+                            bottomBarVisible = bottomBarVisible,
+                            isCreateQrScreenActive = currentRoute.contains(Screens.CreateQrScreen.toString()),
+                            isHistoryScreenActive = currentRoute.contains(Screens.HistoryQrScreen.toString()),
                             onHistoryClick = { /* Handle history click */ },
                             onScanClick = {
                                 navController.navigate(Screens.CameraScreen) {
