@@ -1,6 +1,7 @@
 package id.dev.qrcraft
 
 import android.app.Application
+import id.dev.core.data.di.dataBaseModule
 import id.dev.home.presentation.di.homePresentationModule
 import id.dev.qrcraft.di.appModule
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +26,7 @@ class QRCraftApp : Application() {
             androidLogger()
             modules(
                 appModule,
+                dataBaseModule,
                 homePresentationModule
             )
         }

@@ -69,6 +69,8 @@ fun CameraScreenRoot(
             is CameraScreenEvent.ScanResult -> {
                 onScanResult(event.result)
             }
+
+            is CameraScreenEvent.AddToDatabase -> {}
         }
     }
 

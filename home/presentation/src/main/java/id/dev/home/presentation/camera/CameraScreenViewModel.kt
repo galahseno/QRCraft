@@ -2,6 +2,8 @@ package id.dev.home.presentation.camera
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.dev.core.domain.model.QrItem
+import id.dev.home.domain.repo.HistoryRepository
 import id.dev.home.presentation.model.QrTypes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -11,7 +13,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CameraScreenViewModel() : ViewModel() {
+class CameraScreenViewModel(
+    private val historyRepository: HistoryRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CameraScreenState())
     val state = _state.asStateFlow()
@@ -30,7 +34,7 @@ class CameraScreenViewModel() : ViewModel() {
                 }
             }
 
-            is CameraScreenAction.OnScanResult -> handleScanResult(action.result)
+            is CameraScreenAction.OnScanResult -> handleScanResult(qrTypes = action.result,/* action.history*/)
             is CameraScreenAction.OnDismissErrorDialog -> handleDismissErrorDialog()
         }
     }
@@ -44,7 +48,7 @@ class CameraScreenViewModel() : ViewModel() {
         }
     }
 
-    private fun handleScanResult(qrTypes: QrTypes?) {
+    private fun handleScanResult(qrTypes: QrTypes?, /*qrItem: QrItem*/) {
         viewModelScope.launch {
             _state.update {
                 it.copy(
@@ -64,7 +68,10 @@ class CameraScreenViewModel() : ViewModel() {
                 }
 
                 else -> {
+//                    historyRepository.addQrItem(qrItem)
+//                    delay(150L)
                     _event.send(CameraScreenEvent.ScanResult(qrTypes))
+//                    _event.send(CameraScreenEvent.AddToDatabase(qrItem))
                 }
             }
 

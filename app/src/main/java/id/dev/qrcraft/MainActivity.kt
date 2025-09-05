@@ -36,7 +36,8 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(currentRoute) {
                     bottomBarVisible = when {
                         currentRoute.contains(Screens.CreateQrScreen.toString())
-                                || currentRoute.contains(Screens.CameraScreen.toString()) -> {
+                                || currentRoute.contains(Screens.CameraScreen.toString())
+                                || currentRoute.contains(Screens.HistoryQrScreen.toString()) -> {
                             true
                         }
 
@@ -54,7 +55,15 @@ class MainActivity : ComponentActivity() {
                             bottomBarVisible = bottomBarVisible,
                             isCreateQrScreenActive = currentRoute.contains(Screens.CreateQrScreen.toString()),
                             isHistoryScreenActive = currentRoute.contains(Screens.HistoryQrScreen.toString()),
-                            onHistoryClick = { /* Handle history click */ },
+                            onHistoryClick = {
+                                navController.navigate(Screens.HistoryQrScreen) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(Screens.CameraScreen) {
+                                        saveState = true
+                                    }
+                                }
+                            },
                             onScanClick = {
                                 navController.navigate(Screens.CameraScreen) {
                                     launchSingleTop = true

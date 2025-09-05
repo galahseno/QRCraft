@@ -6,6 +6,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,6 +17,8 @@ import id.dev.core.presentation.R
 import id.dev.home.presentation.camera.CameraScreenRoot
 import id.dev.home.presentation.create_qr.CreateQRRoot
 import id.dev.home.presentation.create_qr_generator.GenerateQrCodeRoot
+import id.dev.home.presentation.history.components.Destination
+import id.dev.home.presentation.history.ScanHistoryScreenRoot
 import id.dev.home.presentation.model.QrTypeIdentifier
 import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.scanResult.ScanResultScreenRoot
@@ -74,7 +77,7 @@ fun AppNavigation(
                 slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = {-it}) + fadeIn()
+                slideInHorizontally(initialOffsetX = {-it }) + fadeIn()
             }
         ) {
             CreateQRRoot(
@@ -116,6 +119,38 @@ fun AppNavigation(
                     )
                 }
             )
+        }
+        composable<Screens.HistoryQrScreen>(
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+            },
+            exitTransition = {
+                fadeOut()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = {-it }) + fadeIn()
+            }
+        ) {
+            ScanHistoryScreenRoot()
+        }
+        Destination.entries.forEach { destination ->
+            composable(destination.route) {
+                when (destination) {
+                    Destination.SCANNED -> {
+                        Text(
+                            text = "Hello world"
+                        )
+                    }
+                    Destination.GENERATED -> {
+                        Text(
+                            text = "Hello man"
+                        )
+                    }
+                }
+            }
         }
     }
 }

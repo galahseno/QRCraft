@@ -1,8 +1,8 @@
-package id.dev.core.domain
+package id.dev.core.domain.model
 
 sealed interface Result<out D, out E: Error> {
     data class Success<out D>(val data: D): Result<D, Nothing>
-    data class Error<out E: id.dev.core.domain.Error>(val error: E):
+    data class Error<out E: id.dev.core.domain.model.Error>(val error: E):
         Result<Nothing, E>
 }
 
