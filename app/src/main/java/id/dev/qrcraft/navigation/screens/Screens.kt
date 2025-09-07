@@ -10,7 +10,7 @@ sealed interface Screens {
 
     @Serializable
     data class ScanResultScreen(
-        val qrTypes: String,
+        val qrId: String,
         val titleVal: String
     ) : Screens
 

@@ -1,4 +1,4 @@
-package id.dev.home.presentation.scanResult.component
+package id.dev.home.presentation.scan_result.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

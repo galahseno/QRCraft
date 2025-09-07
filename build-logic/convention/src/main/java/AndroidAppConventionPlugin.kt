@@ -1,3 +1,4 @@
+import androidx.room.gradle.RoomExtension
 import com.android.build.api.dsl.ApplicationExtension
 import id.dev.convention.ExtensionType
 import id.dev.convention.configureAndroidCompose
@@ -17,6 +18,11 @@ class AndroidAppConventionPlugin : Plugin<Project> {
                 apply(libs.findPlugin("kotlin.android").get().get().pluginId)
                 apply(libs.findPlugin("kotlin.compose").get().get().pluginId)
                 apply(libs.findPlugin("kotlin.serialization").get().get().pluginId)
+                apply(libs.findPlugin("room").get().get().pluginId)
+            }
+
+            extensions.configure<RoomExtension> {
+                schemaDirectory("$projectDir/schemas")
             }
 
             extensions.configure<ApplicationExtension> {

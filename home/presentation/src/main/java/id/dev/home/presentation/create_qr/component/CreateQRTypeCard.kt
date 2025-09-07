@@ -21,11 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import id.dev.home.presentation.create_qr.model.QRType
+import id.dev.home.presentation.create_qr.model.CreateQrTypes
 
 @Composable
 internal fun CreateQRTypeCard(
-    qrType: QRType,
+    createQrTypes: CreateQrTypes,
     onClick: () -> Unit
 ) {
     Card(
@@ -43,7 +43,7 @@ internal fun CreateQRTypeCard(
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(qrType.icon),
+                imageVector = ImageVector.vectorResource(createQrTypes.icon),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
@@ -51,7 +51,7 @@ internal fun CreateQRTypeCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = stringResource(qrType.title),
+                text = stringResource(createQrTypes.title),
                 style = MaterialTheme.typography.titleSmall.copy(
                     color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Center,

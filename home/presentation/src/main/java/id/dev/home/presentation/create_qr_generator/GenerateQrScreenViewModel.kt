@@ -3,23 +3,28 @@ package id.dev.home.presentation.create_qr_generator
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.dev.core.domain.model.Result
+import id.dev.core.presentation.utils.asUiText
+import id.dev.home.domain.HistoryRepository
+import id.dev.home.domain.QrItem
 import id.dev.home.presentation.model.QrTypeIdentifier
 import id.dev.home.presentation.model.QrTypes
+import id.dev.home.presentation.model.ScanHistoryTab
+import id.dev.home.presentation.model.getContent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import timber.log.Timber
 
 class GenerateQrScreenViewModel(
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val historyRepository: HistoryRepository
 ) : ViewModel() {
 
     private val qrTypeIdentifier: QrTypeIdentifier? = savedStateHandle.get<String>("qrType")?.let {
-        Json.decodeFromString<QrTypeIdentifier>(it)
+        QrTypeIdentifier.fromString(it)
     }
 
     private val _state = MutableStateFlow(
@@ -148,11 +153,26 @@ class GenerateQrScreenViewModel(
                 generateQrCode()
             }
 
+            is GenerateQrCodeAction.OnDismissErrorDialog -> {
+                _state.update {
+                    it.copy(
+                        isGenerateError = false,
+                        errorMessage = null
+                    )
+                }
+            }
+
             else -> Unit
         }
     }
 
     private fun generateQrCode() {
+        _state.update {
+            it.copy(
+                isLoading = true
+            )
+        }
+
         val currentState = _state.value
         val qrCodeData = when (currentState.qrTypeIdentifier) {
             QrTypeIdentifier.TEXT -> {
@@ -188,22 +208,41 @@ class GenerateQrScreenViewModel(
                     encryptionType = currentState.wifiEncryption
                 )
             }
-
-            null -> return
         }
 
-        try {
-            val qrString = Json.encodeToString(QrTypes.serializer(), qrCodeData)
-            _state.value = _state.value.copy(
-                generatedQrCode = qrString,
-                isLoading = false
+        _state.update {
+            it.copy(
+                generatedQrCode = qrCodeData.getContent(),
             )
-            viewModelScope.launch {
-                _events.send(GenerateQrCodeEvent.GenerateQrCode(data = qrString))
+        }
+
+        viewModelScope.launch {
+            val result = historyRepository.addQrItem(
+                QrItem(
+                    title = _state.value.qrTypeIdentifier.name.lowercase()
+                        .replaceFirstChar { it.uppercase() },
+                    qrType = _state.value.qrTypeIdentifier.name,
+                    content = qrCodeData.getContent(),
+                    createdAt = System.currentTimeMillis(),
+                    qrCreatedFrom = ScanHistoryTab.Generated.name
+                )
+            )
+
+            when (result) {
+                is Result.Error -> {
+                    _state.update {
+                        it.copy(
+                            isGenerateError = true,
+                            errorMessage = result.error.asUiText(),
+                            isLoading = false,
+                        )
+                    }
+                }
+
+                is Result.Success -> {
+                    _events.send(GenerateQrCodeEvent.GenerateQrCode(qrId = result.data))
+                }
             }
-        } catch (e: Exception) {
-            Timber.d("Error: ${e.message}")
-            _state.value = _state.value.copy(isLoading = false)
         }
     }
 

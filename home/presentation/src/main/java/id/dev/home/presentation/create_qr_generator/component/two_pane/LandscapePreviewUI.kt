@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.home.presentation.component.QrCodeImageLayout
-import id.dev.home.presentation.scanResult.component.ActionButtonsLayout
+import id.dev.home.presentation.scan_result.component.ActionButtonsLayout
 
 @Composable
 internal fun LandscapePreviewUI(

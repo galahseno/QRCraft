@@ -10,14 +10,14 @@ fun provideDataBase(application: Application): HistoryDatabase =
     Room.databaseBuilder(
         application,
         HistoryDatabase::class.java,
-        "table_post"
+        "QR_History.db"
     )
         .fallbackToDestructiveMigration(false)
         .build()
 
 fun provideDao(postDataBase: HistoryDatabase): HistoryDao = postDataBase.historyDao
 
-val dataBaseModule= module {
+val coreDataModule= module {
     single { provideDataBase(get()) }
     single { provideDao(get()) }
 }

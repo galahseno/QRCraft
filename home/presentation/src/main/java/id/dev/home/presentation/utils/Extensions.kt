@@ -19,6 +19,9 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import id.dev.home.presentation.camera.CameraScreenAction
 import id.dev.home.presentation.model.QrTypes
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun ComponentActivity.checkCameraPermissionAndRationale(onAction: (CameraScreenAction) -> Unit) {
     val isGranted = ContextCompat.checkSelfPermission(
@@ -147,4 +150,10 @@ fun isValidLatLng(latitude: Double, longitude: Double): Boolean {
         longitude < -180.0 || longitude > 180.0 -> false
         else -> true
     }
+}
+
+fun Long.toFormattedDateTime(): String {
+    val date = Date(this)
+    val format = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+    return format.format(date)
 }

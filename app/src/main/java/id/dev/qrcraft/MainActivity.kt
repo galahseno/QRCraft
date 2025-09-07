@@ -87,7 +87,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AppNavigation(
                         navController = navController,
-                        contentPadding = it
+                        contentPadding = it,
+                        onTopBarCollapsed = { isCollapsed ->
+                            bottomBarVisible = isCollapsed
+                        }
                     )
                 }
             }

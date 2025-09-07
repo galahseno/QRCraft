@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package id.dev.home.presentation.camera.component.dialog
+package id.dev.home.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.QRCraftTheme
 
 @Composable
-fun ScanErrorDialog(
+fun ErrorDialog(
     errorMessage: String,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
@@ -70,7 +70,7 @@ fun ScanErrorDialog(
 @Composable
 private fun ScanErrorDialogPreview() {
     QRCraftTheme {
-        ScanErrorDialog(
+        ErrorDialog(
             errorMessage = "No QR-codes found",
             onDismissRequest = {
 

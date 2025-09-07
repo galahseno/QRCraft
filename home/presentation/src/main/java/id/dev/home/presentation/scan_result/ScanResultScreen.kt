@@ -1,4 +1,4 @@
-package id.dev.home.presentation.scanResult
+package id.dev.home.presentation.scan_result
 
 import android.app.Activity
 import androidx.compose.foundation.background
@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import id.dev.home.presentation.scanResult.component.ScanResultCard
-import id.dev.home.presentation.scanResult.component.ScanResultTopBar
+import id.dev.home.presentation.scan_result.component.ScanResultCard
+import id.dev.home.presentation.scan_result.component.ScanResultTopBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -34,6 +34,7 @@ fun ScanResultScreenRoot(
         onAction = { action ->
             when (action) {
                 ScanResultScreenAction.OnNavigateUpClicked -> onNavigateUp()
+                else -> Unit
             }
             viewModel.onAction(action)
         }
@@ -71,6 +72,9 @@ internal fun ScanResultScreen(
                 ScanResultCard(
                     qrTypes = it,
                     qrTitle = state.qrTitle,
+                    onTitleChanged = { title ->
+                        onAction(ScanResultScreenAction.OnTitleChanged(title))
+                    },
                     content = state.content,
                 )
             }

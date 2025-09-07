@@ -10,27 +10,25 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import id.dev.home.presentation.model.ScanHistoryTab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun Tabs(navController: NavController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    val selectedTab = Destination.entries.indexOfFirst { it.route == currentRoute }
+internal fun HistoryTabs(
+    selectedTab: ScanHistoryTab,
+    onTabSelected: (ScanHistoryTab) -> Unit,
+) {
 
     PrimaryTabRow(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface),
-        selectedTabIndex = if (selectedTab >= 0) selectedTab else 0,
+        selectedTabIndex = if (selectedTab == ScanHistoryTab.Scanned) 0 else 1,
         indicator = {
             TabRowDefaults.PrimaryIndicator(
-                modifier = Modifier.tabIndicatorOffset(if (selectedTab >= 0) selectedTab else 0),
+                modifier = Modifier.tabIndicatorOffset(if (selectedTab == ScanHistoryTab.Scanned) 0 else 1),
                 width = 176.dp,
                 height = 2.dp,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -38,18 +36,15 @@ internal fun Tabs(navController: NavController) {
             )
         }
     ) {
-        Destination.entries.forEachIndexed { index, destination ->
+        ScanHistoryTab.entries.forEachIndexed { index, destination ->
             Tab(
-                selected = currentRoute == destination.route,
+                selected = selectedTab == destination,
                 onClick = {
-                    navController.navigate(destination.route) {
-                        popUpTo(Destination.SCANNED.route) { inclusive = false }
-                        launchSingleTop = true
-                    }
+                    onTabSelected(destination)
                 },
                 text = {
                     Text(
-                        text = destination.label,
+                        text = destination.name,
                         style = MaterialTheme.typography.labelMedium.copy(
                             color = MaterialTheme.colorScheme.onSurface
                         ),
