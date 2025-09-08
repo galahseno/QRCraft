@@ -89,8 +89,9 @@ internal fun GenerateQrCodeLayout(
                             }
 
                             QrTypeIdentifier.GEO -> {
-                                if (it.all { ch -> ch.isDigit() || ch == '-' || ch == '.' }) {
+                                if (it.all { ch -> ch.isDigit() || ch == '-' || ch == '.' || ch == ','}) {
                                     onAction(GenerateQrCodeAction.OnLatitudeChanged(it))
+
                                 }
                             }
 

@@ -71,7 +71,7 @@ class CameraScreenViewModel(
                 }
 
                 else -> {
-                    val result =historyRepository.addQrItem(
+                    val result = historyRepository.addQrItem(
                         QrItem(
                             title = qrTypes.getTitle(),
                             qrType = qrTypes.getTitle().uppercase(),
