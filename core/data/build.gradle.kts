@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.qrcraft.android.library)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -8,5 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.domain)
+    implementation(libs.bundles.room)
 
+    ksp(libs.room.compiler)
 }

@@ -97,7 +97,7 @@ fun CreateQRScreen(
                     key = { it }
                 ) { index ->
                     CreateQRTypeCard(
-                        qrType = state.availableTypes[index],
+                        createQrTypes = state.availableTypes[index],
                         onClick = {
                             onAction(
                                 CreateQRAction.SelectQRType(

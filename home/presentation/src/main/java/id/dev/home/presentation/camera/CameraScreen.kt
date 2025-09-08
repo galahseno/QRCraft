@@ -1,6 +1,5 @@
 package id.dev.home.presentation.camera
 
-import id.dev.home.presentation.camera.component.CameraOverlayWithCutout
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -47,19 +46,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.dev.core.presentation.theme.success
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.ObserveAsEvents
+import id.dev.home.presentation.camera.component.CameraOverlayWithCutout
 import id.dev.home.presentation.camera.component.CameraPermissionHandler
 import id.dev.home.presentation.camera.component.CameraPreview
 import id.dev.home.presentation.camera.component.dialog.CameraPermissionDialog
 import id.dev.home.presentation.camera.component.dialog.LoadingDialog
-import id.dev.home.presentation.camera.component.dialog.ScanErrorDialog
-import id.dev.home.presentation.model.QrTypes
+import id.dev.home.presentation.component.ErrorDialog
 import id.dev.home.presentation.utils.checkCameraPermissionAndRationale
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun CameraScreenRoot(
-    onScanResult: (QrTypes) -> Unit,
+    onScanResult: (String) -> Unit,
     viewModel: CameraScreenViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -67,7 +66,7 @@ fun CameraScreenRoot(
     ObserveAsEvents(viewModel.event) { event ->
         when (event) {
             is CameraScreenEvent.ScanResult -> {
-                onScanResult(event.result)
+                onScanResult(event.qrId.toString())
             }
         }
     }
@@ -224,7 +223,7 @@ fun CameraScreen(
         }
 
         state.isScanError && state.errorMessage != null -> {
-            ScanErrorDialog(
+            ErrorDialog(
                 errorMessage = state.errorMessage.asString(),
                 onDismissRequest = {
                     onAction(CameraScreenAction.OnDismissErrorDialog)

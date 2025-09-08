@@ -2,16 +2,24 @@ package id.dev.home.presentation.camera
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.dev.core.domain.model.Result
+import id.dev.core.presentation.utils.asUiText
+import id.dev.home.domain.HistoryRepository
+import id.dev.home.domain.QrItem
 import id.dev.home.presentation.model.QrTypes
+import id.dev.home.presentation.model.ScanHistoryTab
+import id.dev.home.presentation.model.getContent
+import id.dev.home.presentation.model.getTitle
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class CameraScreenViewModel() : ViewModel() {
+class CameraScreenViewModel(
+    private val historyRepository: HistoryRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CameraScreenState())
     val state = _state.asStateFlow()
@@ -30,7 +38,7 @@ class CameraScreenViewModel() : ViewModel() {
                 }
             }
 
-            is CameraScreenAction.OnScanResult -> handleScanResult(action.result)
+            is CameraScreenAction.OnScanResult -> handleScanResult(qrTypes = action.result)
             is CameraScreenAction.OnDismissErrorDialog -> handleDismissErrorDialog()
         }
     }
@@ -51,7 +59,6 @@ class CameraScreenViewModel() : ViewModel() {
                     isLoading = true
                 )
             }
-            delay(500) // simulate loading
 
             when (qrTypes) {
                 is QrTypes.Error, null -> {
@@ -64,7 +71,30 @@ class CameraScreenViewModel() : ViewModel() {
                 }
 
                 else -> {
-                    _event.send(CameraScreenEvent.ScanResult(qrTypes))
+                    val result = historyRepository.addQrItem(
+                        QrItem(
+                            title = qrTypes.getTitle(),
+                            qrType = qrTypes.getTitle().uppercase(),
+                            content = qrTypes.getContent(),
+                            createdAt = System.currentTimeMillis(),
+                            qrCreatedFrom = ScanHistoryTab.Scanned.name
+                        )
+                    )
+
+                    when(result) {
+                        is Result.Error -> {
+                            _state.update {
+                                it.copy(
+                                    isScanError = true,
+                                    errorMessage = result.error.asUiText()
+                                )
+                            }
+                        }
+                        is Result.Success -> {
+                            _event.send(CameraScreenEvent.ScanResult(result.data))
+                        }
+                    }
+
                 }
             }
 

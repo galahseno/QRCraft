@@ -89,8 +89,9 @@ internal fun GenerateQrCodeLayout(
                             }
 
                             QrTypeIdentifier.GEO -> {
-                                if (it.all { ch -> ch.isDigit() || ch == '-' }) {
+                                if (it.all { ch -> ch.isDigit() || ch == '-' || ch == '.' || ch == ','}) {
                                     onAction(GenerateQrCodeAction.OnLatitudeChanged(it))
+
                                 }
                             }
 
@@ -187,7 +188,7 @@ internal fun GenerateQrCodeLayout(
                         QRCraftTextField(
                             value = state.longitude,
                             onValueChange = {
-                                if (it.all { ch -> ch.isDigit() || ch == '-' }) {
+                                if (it.all { ch -> ch.isDigit() || ch == '-' || ch == '.' }) {
                                     onAction(GenerateQrCodeAction.OnLongitudeChanged(it))
                                 }
                             },

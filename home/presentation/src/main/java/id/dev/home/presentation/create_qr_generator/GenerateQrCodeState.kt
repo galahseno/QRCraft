@@ -1,12 +1,11 @@
 package id.dev.home.presentation.create_qr_generator
 
 import android.webkit.URLUtil.isValidUrl
+import id.dev.core.presentation.utils.UiText
 import id.dev.home.presentation.model.QrTypeIdentifier
-import id.dev.home.presentation.model.QrTypes
 import id.dev.home.presentation.utils.isValidEmail
 import id.dev.home.presentation.utils.isValidLatLng
 import id.dev.home.presentation.utils.isValidPhoneNumber
-import kotlinx.serialization.json.Json
 
 data class GenerateQrScreenState(
     val qrTypeIdentifier: QrTypeIdentifier = QrTypeIdentifier.TEXT,
@@ -23,6 +22,8 @@ data class GenerateQrScreenState(
     val wifiEncryption: String = "",
     val generatedQrCode: String? = null,
     val isLoading: Boolean = false,
+    val isGenerateError: Boolean = false,
+    val errorMessage: UiText? = null
 ) {
     val isWifiFormValid: Boolean
         get() = wifiSSID.isNotBlank() &&
@@ -52,22 +53,4 @@ data class GenerateQrScreenState(
 
     val isPhoneNumberFormValid: Boolean
         get() = isValidPhoneNumber(phoneNumber)
-
-    val qrContent: String?
-        get() = generatedQrCode?.let { qrString ->
-            try {
-                val qrData = Json.decodeFromString<QrTypes>(qrString)
-                when (qrData) {
-                    is QrTypes.Contact -> "${qrData.name}\n${qrData.email}\n${qrData.phone}"
-                    is QrTypes.Error -> "${qrData.message}"
-                    is QrTypes.Geo -> "${qrData.lat}, ${qrData.lng}"
-                    is QrTypes.Link -> qrData.url
-                    is QrTypes.Phone -> qrData.number
-                    is QrTypes.Text -> qrData.content
-                    is QrTypes.Wifi -> "SSID: ${qrData.ssid}\nPassword: ${qrData.password}\nEncryption type: ${qrData.encryptionType}"
-                }
-            } catch (e: Exception) {
-                null
-            }.toString()
-        }
 }

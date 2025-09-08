@@ -28,4 +28,6 @@
     <string name="enter_url">URL</string>
     <string name="enter_text">Text</string>
     <string name="preview">Preview</string>
+    <string name="scan_history">Scan History</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.timber)
     implementation(libs.bundles.koin.compose)
+    implementation(libs.coil.compose)
 
     with(projects) {
         implementation(core.data)

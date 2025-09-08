@@ -30,11 +30,9 @@ internal fun QrPreviewPane(
         verticalArrangement = Arrangement.Center
     ) {
         if (state.generatedQrCode != null) {
-            state.qrContent?.let {
-                LandscapePreviewUI(
-                    qrCode = it
-                )
-            }
+            LandscapePreviewUI(
+                qrCode = state.generatedQrCode
+            )
         } else {
             when (state.qrTypeIdentifier) {
                 QrTypeIdentifier.TEXT -> EmptyPreview(message = "Empty Text")

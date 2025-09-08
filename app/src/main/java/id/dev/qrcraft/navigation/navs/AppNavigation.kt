@@ -16,14 +16,13 @@ import id.dev.core.presentation.R
 import id.dev.home.presentation.camera.CameraScreenRoot
 import id.dev.home.presentation.create_qr.CreateQRRoot
 import id.dev.home.presentation.create_qr_generator.GenerateQrCodeRoot
-import id.dev.home.presentation.model.QrTypeIdentifier
-import id.dev.home.presentation.model.QrTypes
-import id.dev.home.presentation.scanResult.ScanResultScreenRoot
+import id.dev.home.presentation.history.ScanHistoryScreenRoot
+import id.dev.home.presentation.scan_result.ScanResultScreenRoot
 import id.dev.qrcraft.navigation.screens.Screens
-import kotlinx.serialization.json.Json
 
 @Composable
 fun AppNavigation(
+    onTopBarCollapsed: (Boolean) -> Unit,
     navController: NavHostController,
     contentPadding: PaddingValues
 ) {
@@ -36,16 +35,13 @@ fun AppNavigation(
     ) {
         composable<Screens.CameraScreen> {
             CameraScreenRoot(
-                onScanResult = { barcodeResult ->
-                    if (barcodeResult !is QrTypes.Error) {
-                        val result = Json.encodeToString(QrTypes.serializer(), barcodeResult)
-                        navController.navigate(
-                            route = Screens.ScanResultScreen(
-                                qrTypes = result,
-                                titleVal = context.getString(R.string.scan_result)
-                            )
+                onScanResult = { qrId ->
+                    navController.navigate(
+                        route = Screens.ScanResultScreen(
+                            qrId = qrId,
+                            titleVal = context.getString(R.string.scan_result)
                         )
-                    }
+                    )
                 },
             )
         }
@@ -71,19 +67,17 @@ fun AppNavigation(
                 fadeOut()
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+                slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = {-it}) + fadeIn()
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
             }
         ) {
             CreateQRRoot(
                 onNavigateToGenerator = { qrTypeIdentifier ->
-                    val result =
-                        Json.encodeToString(QrTypeIdentifier.serializer(), qrTypeIdentifier)
                     navController.navigate(
                         route = Screens.GenerateQrScreen(
-                            qrType = result
+                            qrType = qrTypeIdentifier.name
                         )
                     )
                 }
@@ -100,21 +94,47 @@ fun AppNavigation(
                 slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = {-it}) + fadeIn()
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
             }
         ) { backStackEntry ->
             GenerateQrCodeRoot(
                 onNavigateUp = {
                     navController.navigateUp()
                 },
-                onNavigateToPreview = { qr ->
+                onNavigateToPreview = { qrId ->
                     navController.navigate(
                         route = Screens.ScanResultScreen(
-                            qrTypes = qr,
+                            qrId = qrId,
                             titleVal = context.getString(R.string.preview)
                         )
                     )
                 }
+            )
+        }
+        composable<Screens.HistoryQrScreen>(
+            enterTransition = {
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
+            },
+            exitTransition = {
+                slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+            },
+            popExitTransition = {
+                slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+            },
+            popEnterTransition = {
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
+            }
+        ) {
+            ScanHistoryScreenRoot(
+                onItemClick = { qrId ->
+                    navController.navigate(
+                        route = Screens.ScanResultScreen(
+                            qrId = qrId,
+                            titleVal = context.getString(R.string.preview)
+                        )
+                    )
+                },
+                onTopBarCollapsed = onTopBarCollapsed
             )
         }
     }

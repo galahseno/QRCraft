@@ -4,6 +4,7 @@ package id.dev.home.presentation.create_qr_generator
 
 import android.app.Activity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutout
@@ -35,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import id.dev.core.presentation.R
 import id.dev.core.presentation.utils.DeviceConfiguration
 import id.dev.core.presentation.utils.ObserveAsEvents
+import id.dev.home.presentation.component.ErrorDialog
 import id.dev.home.presentation.create_qr_generator.component.GenerateQrCodeLayout
 import id.dev.home.presentation.create_qr_generator.component.two_pane.QrPreviewPane
 import id.dev.home.presentation.model.QrTypeIdentifier
@@ -56,7 +58,7 @@ fun GenerateQrCodeRoot(
         when (event) {
             is GenerateQrCodeEvent.GenerateQrCode -> {
                 if (deviceConfiguration != DeviceConfiguration.MOBILE_LANDSCAPE) {
-                    onNavigateToPreview(event.data)
+                    onNavigateToPreview(event.qrId.toString())
                 }
             }
         }
@@ -133,24 +135,37 @@ internal fun GenerateQrCodeScreen(
             )
         }
     ) { innerPadding ->
-
-        Row(
+        Box(
             modifier = Modifier
-                .background(MaterialTheme.colorScheme.surface)
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
         ) {
-            GenerateQrCodeLayout(
-                state = state,
-                onAction = onAction,
-                modifier = Modifier.weight(1f),
-            )
-
-            if (isMobileLandscape) {
-                QrPreviewPane(
+            Row(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                GenerateQrCodeLayout(
                     state = state,
+                    onAction = onAction,
                     modifier = Modifier.weight(1f),
+                )
+
+                if (isMobileLandscape) {
+                    QrPreviewPane(
+                        state = state,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+
+            if (state.isGenerateError && state.errorMessage != null) {
+                ErrorDialog(
+                    errorMessage = state.errorMessage.asString(),
+                    onDismissRequest = {
+                        onAction(GenerateQrCodeAction.OnDismissErrorDialog)
+                    }
                 )
             }
         }

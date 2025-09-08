@@ -14,4 +14,5 @@ sealed interface GenerateQrCodeAction {
     data class OnWifiSSIDChanged(val ssid: String) : GenerateQrCodeAction
     data class OnWifiPasswordChanged(val password: String) : GenerateQrCodeAction
     data class OnWifiEncryptionChanged(val encryption: String) : GenerateQrCodeAction
+    data object OnDismissErrorDialog : GenerateQrCodeAction
 }
