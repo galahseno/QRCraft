@@ -5,6 +5,8 @@ import id.dev.home.presentation.create_qr.CreateQRViewModel
 import id.dev.home.presentation.create_qr_generator.GenerateQrScreenViewModel
 import id.dev.home.presentation.history.HistoryViewModel
 import id.dev.home.presentation.scan_result.ScanResultScreenViewModel
+import id.dev.home.presentation.utils.QrCodeAnalyzer
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -14,4 +16,8 @@ val homePresentationModule = module {
     viewModelOf(::CreateQRViewModel)
     viewModelOf(::GenerateQrScreenViewModel)
     viewModelOf(::HistoryViewModel)
+
+    single {
+        QrCodeAnalyzer(androidContext())
+    }
 }

@@ -15,7 +15,6 @@ enum class DeviceConfiguration {
         fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration {
             val widthSizeClass = windowSizeClass.windowWidthSizeClass
             val heightSizeClass = windowSizeClass.windowHeightSizeClass
-
             return when {
                 widthSizeClass == WindowWidthSizeClass.COMPACT && heightSizeClass == WindowHeightSizeClass.MEDIUM -> MOBILE_PORTRAIT
                 widthSizeClass == WindowWidthSizeClass.COMPACT && heightSizeClass == WindowHeightSizeClass.EXPANDED -> MOBILE_PORTRAIT

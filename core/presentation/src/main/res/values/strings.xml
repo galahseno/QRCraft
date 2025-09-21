@@ -30,4 +30,8 @@
     <string name="preview">Preview</string>
     <string name="scan_history">Scan History</string>
     <string name="delete">Delete</string>
+    <string name="off_flashlight">Turn off flashlight</string>
+    <string name="on_flashlight">Turn on flashlight</string>
+    <string name="no_qr_codes_found_in_image">No qr code found in gallery\t\t</string>
+    <string name="image_processing_error">Image processing error</string>
 </resources>
