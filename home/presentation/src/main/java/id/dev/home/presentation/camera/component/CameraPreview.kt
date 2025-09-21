@@ -7,6 +7,7 @@ import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,8 @@ import id.dev.home.presentation.utils.mapBarcodeToResult
 @Composable
 fun CameraPreview(
     onQrCodeScanned: (QrTypes?) -> Unit,
-    boundingBox: Rect? = null
+    boundingBox: Rect? = null,
+    onCameraControllerReady: (LifecycleCameraController) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -50,6 +52,9 @@ fun CameraPreview(
             setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
             imageAnalysisBackpressureStrategy = ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
         }
+    }
+    LaunchedEffect(controller) {
+        onCameraControllerReady(controller)
     }
 
 
