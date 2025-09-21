@@ -2,7 +2,6 @@ package id.dev.home.presentation.camera
 
 import android.net.Uri
 import androidx.camera.core.TorchState
-import androidx.camera.view.LifecycleCameraController
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.dev.core.domain.model.Result
@@ -65,10 +64,6 @@ class CameraScreenViewModel(
                 _state.update {
                     it.copy(hasFlashlight = action.hasFlashlight)
                 }
-            }
-
-            is CameraScreenAction.OnGalleryClicked -> {
-                // TODO: Handle gallery action
             }
 
             is CameraScreenAction.OnScanResult -> handleScanResult(qrTypes = action.result)

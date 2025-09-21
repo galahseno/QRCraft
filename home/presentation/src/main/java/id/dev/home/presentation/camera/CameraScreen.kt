@@ -64,7 +64,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.mlkit.vision.common.InputImage
 import id.dev.core.presentation.R
 import id.dev.core.presentation.theme.success
 import id.dev.core.presentation.utils.DeviceConfiguration
@@ -112,8 +111,6 @@ fun CameraScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
@@ -242,11 +239,9 @@ fun CameraScreen(
                 actions = {
                     IconButton(
                         onClick = {
-                            onAction(CameraScreenAction.OnGalleryClicked)
                             singlePhotoPickerLauncher.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                             )
-
                         },
                         modifier = Modifier
                             .padding(end = 8.dp)

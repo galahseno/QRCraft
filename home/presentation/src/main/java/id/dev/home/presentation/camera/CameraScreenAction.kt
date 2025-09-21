@@ -20,5 +20,4 @@ sealed interface CameraScreenAction {
     data object OnDismissErrorDialog : CameraScreenAction
     data object OnFlashlightClicked: CameraScreenAction
     data class OnImageSelected(val uri: Uri?) : CameraScreenAction
-    object OnGalleryClicked : CameraScreenAction
 }
