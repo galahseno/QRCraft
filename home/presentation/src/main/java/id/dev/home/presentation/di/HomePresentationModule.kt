@@ -5,6 +5,7 @@ import id.dev.home.presentation.create_qr.CreateQRViewModel
 import id.dev.home.presentation.create_qr_generator.GenerateQrScreenViewModel
 import id.dev.home.presentation.history.HistoryViewModel
 import id.dev.home.presentation.scan_result.ScanResultScreenViewModel
+import id.dev.home.presentation.utils.MediaStoreImageSaver
 import id.dev.home.presentation.utils.QrCodeAnalyzer
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModelOf
@@ -19,5 +20,9 @@ val homePresentationModule = module {
 
     single {
         QrCodeAnalyzer(androidContext())
+    }
+
+    single {
+        MediaStoreImageSaver(androidContext())
     }
 }

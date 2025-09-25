@@ -1,15 +1,21 @@
 package id.dev.home.presentation.scan_result
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,6 +55,18 @@ internal fun ScanResultScreen(
     val context = LocalContext.current
     val view = LocalView.current
 
+    // Handle save status with Toast or Snackbar
+    LaunchedEffect(state.saveImageSuccess, state.saveImageError) {
+        when {
+            state.saveImageSuccess == true -> {
+                Toast.makeText(context, "QR code saved successfully!", Toast.LENGTH_SHORT).show()
+            }
+            state.saveImageError != null -> {
+                Toast.makeText(context, "Failed to save: ${state.saveImageError}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -56,6 +74,18 @@ internal fun ScanResultScreen(
                 titleVal = state.titleVal,
                 onBackClick = {
                     onAction(ScanResultScreenAction.OnNavigateUpClicked)
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            TODO()
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = null
+                        )
+                    }
                 }
             )
         }
@@ -76,6 +106,9 @@ internal fun ScanResultScreen(
                         onAction(ScanResultScreenAction.OnTitleChanged(title))
                     },
                     content = state.content,
+                    onSaveClicked = {
+                        onAction(ScanResultScreenAction.OnSaveIsClicked)
+                    }
                 )
             }
         }

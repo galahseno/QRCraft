@@ -2,6 +2,7 @@
 
 package id.dev.home.presentation.scan_result.component
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -21,6 +22,7 @@ import id.dev.core.presentation.R
 fun ScanResultTopBar(
     titleVal: String,
     onBackClick: () -> Unit,
+    actions: @Composable (RowScope)-> Unit,
     modifier: Modifier = Modifier
 ) {
     CenterAlignedTopAppBar(
@@ -40,7 +42,9 @@ fun ScanResultTopBar(
                     contentDescription = stringResource(R.string.navigate_up),
                 )
             }
-        }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        },
+        actions = actions,
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.onSurface,
             navigationIconContentColor = Color.White,
             titleContentColor = Color.White,

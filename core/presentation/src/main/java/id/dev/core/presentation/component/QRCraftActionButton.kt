@@ -3,6 +3,7 @@ package id.dev.core.presentation.component
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -30,7 +32,8 @@ fun QRCraftActionButton(
 ) {
     Button(
         modifier = modifier
-            .minimumInteractiveComponentSize(),
+            .minimumInteractiveComponentSize()
+            .clip(CircleShape),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -38,14 +41,13 @@ fun QRCraftActionButton(
     ) {
         if (leadingIcon != null) {
             leadingIcon()
-            Spacer(Modifier.width(8.dp))
         }
-        Text(
-            text = buttonText,
-            style = MaterialTheme.typography.labelLarge.copy(
-                color = buttonTextColor,
-            )
-        )
+//        Text(
+//            text = buttonText,
+//            style = MaterialTheme.typography.labelLarge.copy(
+//                color = buttonTextColor,
+//            )
+//        )
     }
 }
 
