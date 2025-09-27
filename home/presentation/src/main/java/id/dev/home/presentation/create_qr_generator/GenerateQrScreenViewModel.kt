@@ -224,7 +224,8 @@ class GenerateQrScreenViewModel(
                     qrType = _state.value.qrTypeIdentifier.name,
                     content = qrCodeData.getContent(),
                     createdAt = System.currentTimeMillis(),
-                    qrCreatedFrom = ScanHistoryTab.Generated.name
+                    qrCreatedFrom = ScanHistoryTab.Generated.name,
+                    isFavorite = false
                 )
             )
 

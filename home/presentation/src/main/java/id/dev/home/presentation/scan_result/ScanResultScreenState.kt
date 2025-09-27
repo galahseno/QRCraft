@@ -8,8 +8,6 @@ data class ScanResultScreenState(
     val qrTitle: String = "",
     val content: String = "",
     val titleVal: String = "",
+    val isFavorite: Boolean = false,
     val image: Bitmap? = null,
-    val isSavingImage: Boolean = false,
-    val saveImageSuccess: Boolean? = null,
-    val saveImageError: String? = null
 )

@@ -48,6 +48,7 @@ fun ScanResultTopBar(
             containerColor = MaterialTheme.colorScheme.onSurface,
             navigationIconContentColor = Color.White,
             titleContentColor = Color.White,
+            actionIconContentColor = Color.White
         )
     )
 }

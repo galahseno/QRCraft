@@ -8,5 +8,7 @@
     <string name="loading">Loading</string>
     <string name="analyzer_error">Analyze error: %s</string>
     <string name="initialize_error">Initialize error: %s</string>
-    <string name="generate_preview"><![CDATA[Generate & Preview]]></string>\
+    <string name="generate_preview"><![CDATA[Generate & Preview]]></string>
+    <string name="image_saved_to_downloads">Image saved to Downloads</string>
+    <string name="failed_to_save">Failed to save: %1$s</string>\
 </resources>

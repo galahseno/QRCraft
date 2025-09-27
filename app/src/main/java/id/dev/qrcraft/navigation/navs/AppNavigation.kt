@@ -18,7 +18,6 @@ import id.dev.home.presentation.create_qr.CreateQRRoot
 import id.dev.home.presentation.create_qr_generator.GenerateQrCodeRoot
 import id.dev.home.presentation.history.ScanHistoryScreenRoot
 import id.dev.home.presentation.scan_result.ScanResultScreenRoot
-import id.dev.home.presentation.utils.MediaStoreImageSaver
 import id.dev.qrcraft.navigation.screens.Screens
 
 @Composable
@@ -28,7 +27,6 @@ fun AppNavigation(
     contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
-    val mediator = MediaStoreImageSaver(context)
 
     NavHost(
         navController = navController,

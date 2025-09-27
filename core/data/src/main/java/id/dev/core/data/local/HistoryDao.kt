@@ -10,9 +10,12 @@ interface HistoryDao {
     @Query("""
         SELECT * FROM qr_table 
         WHERE qrCreatedFrom = :source 
-        ORDER BY createdAt DESC
+        ORDER BY isFavorite DESC, createdAt DESC
     """)
     fun getBySourceFlow(source: String): Flow<List<QrItemEntity>>
+    
+    @Query("UPDATE qr_table SET isFavorite = :isFavorite WHERE id = :id")
+    suspend fun favoriteQrResult(id: String, isFavorite: Boolean)
 
     @Query("Select * from qr_table where id = :id")
     suspend fun getQrById(id: String): QrItemEntity?

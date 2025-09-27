@@ -24,9 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.FlashOff
-import androidx.compose.material.icons.outlined.FlashOn
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -124,24 +121,20 @@ fun CameraScreen(
     var cutoutOffset by remember { mutableStateOf(Offset.Zero) }
     var cutoutSizePx by remember { mutableStateOf(IntSize.Zero) }
 
-    // Check initial flashlight capability
     LaunchedEffect(Unit) {
         val hasFlashlightFeature = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         onAction(CameraScreenAction.OnFlashlightAvailabilityChanged(hasFlashlightFeature))
     }
 
-    // Observe torch state changes from camera controller
     LaunchedEffect(state.cameraController) {
         state.cameraController?.cameraInfo?.torchState?.asFlow()?.collect { torchState ->
             onAction(CameraScreenAction.OnTorchStateChanged(torchState))
         }
     }
 
-    // Check actual camera flash capability after camera is bound
     LaunchedEffect(state.cameraController, state.hasCameraPermission) {
         val controller = state.cameraController
         if (controller != null && state.hasCameraPermission) {
-            // Wait a bit for camera to fully initialize
             delay(500)
             val hasActualFlash = try {
                 controller.cameraInfo?.hasFlashUnit() == true
