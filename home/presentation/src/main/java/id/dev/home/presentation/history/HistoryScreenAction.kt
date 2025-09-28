@@ -10,5 +10,6 @@ sealed interface HistoryScreenAction {
     data class OnTopBarCollapsed(val isCollapsed: Boolean) : HistoryScreenAction
     data class OnItemClick(val qrId: String): HistoryScreenAction
     data class OnItemLongClick(val qrItem: QrItem): HistoryScreenAction
+    data class OnFavoriteClick(val qrItem: QrItem): HistoryScreenAction
     data object OnModalBottomSheetDismiss : HistoryScreenAction
 }

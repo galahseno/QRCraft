@@ -6,5 +6,6 @@ data class QrItem(
     val qrType: String,
     val content: String,
     val createdAt: Long,
-    val qrCreatedFrom: String
+    val qrCreatedFrom: String,
+    val isFavorite: Boolean
 )

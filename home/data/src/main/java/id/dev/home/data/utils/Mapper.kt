@@ -10,7 +10,8 @@ fun QrItemEntity.toDomain(): QrItem = QrItem(
     qrType = qrType,
     content = content,
     createdAt = createdAt,
-    qrCreatedFrom = qrCreatedFrom
+    qrCreatedFrom = qrCreatedFrom,
+    isFavorite = isFavorite
 )
 
 fun QrItem.toEntity(): QrItemEntity = QrItemEntity(

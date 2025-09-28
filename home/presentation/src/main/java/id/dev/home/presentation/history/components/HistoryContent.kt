@@ -20,6 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +51,7 @@ import id.dev.home.presentation.utils.toFormattedDateTime
 @Composable
 internal fun HistoryContent(
     historyItems: List<QrItem>,
+    onFavoriteClick: (QrItem) -> Unit,
     onItemClick: (QrItem) -> Unit,
     onLongItemClick: (QrItem) -> Unit,
     modifier: Modifier = Modifier
@@ -137,6 +143,20 @@ internal fun HistoryContent(
                                 contentDescription = null,
                                 modifier = Modifier.size(32.dp)
                             )
+                        },
+                        trailingContent = {
+                            IconButton(
+                                modifier = Modifier.size(24.dp),
+                                onClick = {
+                                    onFavoriteClick(item)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (item.isFavorite) Icons.Rounded.Star else Icons.Rounded.StarOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                )
+                            }
                         },
                         colors = ListItemDefaults.colors(
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,

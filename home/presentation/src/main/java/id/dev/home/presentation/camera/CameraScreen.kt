@@ -24,9 +24,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.FlashOff
-import androidx.compose.material.icons.outlined.FlashOn
-import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -56,9 +53,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowInsetsControllerCompat
@@ -122,24 +121,20 @@ fun CameraScreen(
     var cutoutOffset by remember { mutableStateOf(Offset.Zero) }
     var cutoutSizePx by remember { mutableStateOf(IntSize.Zero) }
 
-    // Check initial flashlight capability
     LaunchedEffect(Unit) {
         val hasFlashlightFeature = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         onAction(CameraScreenAction.OnFlashlightAvailabilityChanged(hasFlashlightFeature))
     }
 
-    // Observe torch state changes from camera controller
     LaunchedEffect(state.cameraController) {
         state.cameraController?.cameraInfo?.torchState?.asFlow()?.collect { torchState ->
             onAction(CameraScreenAction.OnTorchStateChanged(torchState))
         }
     }
 
-    // Check actual camera flash capability after camera is bound
     LaunchedEffect(state.cameraController, state.hasCameraPermission) {
         val controller = state.cameraController
         if (controller != null && state.hasCameraPermission) {
-            // Wait a bit for camera to fully initialize
             delay(500)
             val hasActualFlash = try {
                 controller.cameraInfo?.hasFlashUnit() == true
@@ -230,7 +225,7 @@ fun CameraScreen(
                                 )
                         ) {
                             Icon(
-                                if (!state.isFlashlightOn) Icons.Outlined.FlashOn else Icons.Outlined.FlashOff,
+                                imageVector = if (!state.isFlashlightOn) ImageVector.vectorResource(R.drawable.zap_off) else ImageVector.vectorResource(R.drawable.zap),
                                 contentDescription = if (!state.isFlashlightOn) stringResource(R.string.off_flashlight) else stringResource(R.string.on_flashlight),
                             )
                         }
@@ -258,7 +253,7 @@ fun CameraScreen(
                             )
                         } else {
                             Icon(
-                                Icons.Outlined.Image,
+                                imageVector = ImageVector.vectorResource(R.drawable.image),
                                 contentDescription = null
                             )
                         }

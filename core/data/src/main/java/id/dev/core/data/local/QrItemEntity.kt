@@ -11,5 +11,6 @@ data class QrItemEntity(
     val qrType: String,
     val content: String,
     val createdAt: Long,
-    val qrCreatedFrom: String
+    val qrCreatedFrom: String,
+    val isFavorite: Boolean = false
 )

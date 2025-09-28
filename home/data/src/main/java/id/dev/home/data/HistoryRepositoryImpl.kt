@@ -17,6 +17,10 @@ class HistoryRepositoryImpl(
         return historyDao.getBySourceFlow(source).map { qrLists -> qrLists.map { it.toDomain() } }
     }
 
+    override suspend fun updateFavoriteById(id: String, isFavorite: Boolean) {
+        historyDao.favoriteQrResult(id, isFavorite)
+    }
+
     override suspend fun getQrDataById(id: String): QrItem? {
         return historyDao.getQrById(id)?.toDomain()
     }

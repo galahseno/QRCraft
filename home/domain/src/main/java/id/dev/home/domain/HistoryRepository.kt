@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface HistoryRepository {
     fun observeQrItemsBySource(source: String): Flow<List<QrItem>>
+    suspend fun updateFavoriteById(id: String, isFavorite: Boolean)
     suspend fun getQrDataById(id: String): QrItem?
     suspend fun updateTitleById(id: String, newTitle: String)
     suspend fun deleteQrItem(id: String)

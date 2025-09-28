@@ -54,6 +54,7 @@ internal fun ScanResultCard(
     onTitleChanged: (String) -> Unit,
     content: String,
     modifier: Modifier = Modifier,
+    onSaveClicked: () -> Unit = {},
 ) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
@@ -188,6 +189,7 @@ internal fun ScanResultCard(
                 ActionButtonsLayout(
                     share = content,
                     copyToClipboard = content,
+                    onSaveClicked = onSaveClicked
                 )
             }
         }

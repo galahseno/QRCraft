@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -22,20 +25,19 @@ import id.dev.home.presentation.utils.share
 internal fun ActionButtonsLayout(
     share: String,
     copyToClipboard: String,
+    onSaveClicked: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         QRCraftActionButton(
-            buttonText = stringResource(R.string.share),
-            buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
                 context.share(share)
             },
-            modifier = Modifier.weight(1f),
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.share),
@@ -46,15 +48,26 @@ internal fun ActionButtonsLayout(
             }
         )
         QRCraftActionButton(
-            buttonText = stringResource(R.string.copy),
-            buttonTextColor = MaterialTheme.colorScheme.onSurface,
             onClick = {
                 context.copyToClipboard(copyToClipboard)
             },
-            modifier = Modifier.weight(1f),
             leadingIcon = {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.copy),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(12.dp)
+                )
+            },
+        )
+        QRCraftActionButton(
+            modifier = Modifier.fillMaxWidth(),
+            buttonText = stringResource(R.string.save),
+            buttonTextColor = MaterialTheme.colorScheme.onSurface,
+            onClick = onSaveClicked,
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.SaveAlt,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.size(12.dp)

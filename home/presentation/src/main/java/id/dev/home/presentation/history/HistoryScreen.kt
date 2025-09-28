@@ -155,6 +155,9 @@ internal fun ScanHistoryScreen(
                         },
                         onLongItemClick = {
                             onAction(HistoryScreenAction.OnItemLongClick(it))
+                        },
+                        onFavoriteClick = {
+                            onAction(HistoryScreenAction.OnFavoriteClick(it))
                         }
                     )
 
@@ -167,6 +170,9 @@ internal fun ScanHistoryScreen(
                         },
                         onLongItemClick = {
                             onAction(HistoryScreenAction.OnItemLongClick(it))
+                        },
+                        onFavoriteClick = {
+                            onAction(HistoryScreenAction.OnFavoriteClick(it))
                         }
                     )
                 }

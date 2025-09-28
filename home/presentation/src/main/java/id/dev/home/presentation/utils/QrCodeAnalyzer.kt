@@ -32,7 +32,6 @@ class QrCodeAnalyzer(private val context: Context) {
                 )
             }
 
-            // Return the first valid QR code found
             return@withContext barcodes.firstOrNull()?.mapBarcodeToResult()
             
         } catch (e: Exception) {

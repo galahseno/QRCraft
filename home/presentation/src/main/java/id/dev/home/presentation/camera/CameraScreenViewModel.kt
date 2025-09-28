@@ -15,14 +15,12 @@ import id.dev.home.presentation.model.ScanHistoryTab
 import id.dev.home.presentation.model.getContent
 import id.dev.home.presentation.model.getTitle
 import id.dev.home.presentation.utils.QrCodeAnalyzer
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CameraScreenViewModel(
@@ -106,16 +104,12 @@ class CameraScreenViewModel(
 
         viewModelScope.launch {
             try {
-                // Process the image in background thread
-                val result = withContext(Dispatchers.IO) {
-                    qrCodeAnalyzer.analyzeImage(uri)
-                }
+                val result = qrCodeAnalyzer.analyzeImage(uri)
 
                 _state.update {
                     it.copy(isProcessingImage = false)
                 }
 
-                // Handle the scan result same as camera scan
                 handleScanResult(result)
 
             } catch (e: Exception) {
@@ -168,7 +162,8 @@ class CameraScreenViewModel(
                             qrType = qrTypes.getTitle().uppercase(),
                             content = qrTypes.getContent(),
                             createdAt = System.currentTimeMillis(),
-                            qrCreatedFrom = ScanHistoryTab.Scanned.name
+                            qrCreatedFrom = ScanHistoryTab.Scanned.name,
+                            isFavorite = false
                         )
                     )
 

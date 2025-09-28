@@ -88,6 +88,18 @@ class HistoryViewModel(
                 }
             }
 
+            is HistoryScreenAction.OnFavoriteClick -> {
+                action.qrItem.id?.let {
+                    viewModelScope.launch {
+                        repository.updateFavoriteById(
+                            id = it,
+                            isFavorite = !action.qrItem.isFavorite
+                        )
+                    }
+
+                }
+            }
+
             else -> Unit
         }
     }

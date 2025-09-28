@@ -24,7 +24,7 @@ import id.dev.qrcraft.navigation.screens.Screens
 fun AppNavigation(
     onTopBarCollapsed: (Boolean) -> Unit,
     navController: NavHostController,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
 ) {
     val context = LocalContext.current
 
