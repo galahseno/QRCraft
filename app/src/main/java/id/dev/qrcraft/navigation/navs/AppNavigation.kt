@@ -17,8 +17,10 @@ import id.dev.home.presentation.camera.CameraScreenRoot
 import id.dev.home.presentation.create_qr.CreateQRRoot
 import id.dev.home.presentation.create_qr_generator.GenerateQrCodeRoot
 import id.dev.home.presentation.history.ScanHistoryScreenRoot
+import id.dev.home.presentation.model.QrTypeIdentifier
 import id.dev.home.presentation.scan_result.ScanResultScreenRoot
 import id.dev.qrcraft.navigation.screens.Screens
+import id.dev.qrcraft.shortcut.addPinnedShortcut
 
 @Composable
 fun AppNavigation(
@@ -80,7 +82,8 @@ fun AppNavigation(
                             qrType = qrTypeIdentifier.name
                         )
                     )
-                }
+                },
+                onCreateQrShortcut = { addPinnedShortcut(context) }
             )
         }
         composable<Screens.GenerateQrScreen>(

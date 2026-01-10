@@ -80,8 +80,7 @@ class CameraScreenViewModel(
         val currentState = _state.value
         if (!currentState.hasFlashlight) return; if (!currentState.hasCameraPermission) return
 
-        val controller = currentState.cameraController
-        if (controller == null) return
+        val controller = currentState.cameraController ?: return
 
         try {
             val newTorchState = !currentState.isFlashlightOn
