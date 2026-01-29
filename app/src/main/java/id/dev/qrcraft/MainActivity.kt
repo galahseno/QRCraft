@@ -114,6 +114,12 @@ class MainActivity : ComponentActivity() {
         qrTypeString?.let {
             val qrType = QrTypeIdentifier.fromString(it)
             if (qrType == QrTypeIdentifier.TEXT) {
+                navController.navigate(Screens.CreateQrScreen) {
+                    launchSingleTop = true
+                    popUpTo(Screens.CameraScreen) {
+                        saveState = true
+                    }
+                }
                 navController.navigate(
                     Screens.GenerateQrScreen(qrType = QrTypeIdentifier.TEXT.name)
                 ) {
