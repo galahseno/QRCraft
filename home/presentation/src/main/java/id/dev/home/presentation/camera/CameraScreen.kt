@@ -120,7 +120,6 @@ fun CameraScreen(
 
     var cutoutOffset by remember { mutableStateOf(Offset.Zero) }
     var cutoutSizePx by remember { mutableStateOf(IntSize.Zero) }
-
     LaunchedEffect(Unit) {
         val hasFlashlightFeature = context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
         onAction(CameraScreenAction.OnFlashlightAvailabilityChanged(hasFlashlightFeature))
@@ -159,7 +158,7 @@ fun CameraScreen(
 
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
-
+    
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -225,7 +224,8 @@ fun CameraScreen(
                                 )
                         ) {
                             Icon(
-                                imageVector = if (!state.isFlashlightOn) ImageVector.vectorResource(R.drawable.zap_off) else ImageVector.vectorResource(R.drawable.zap),
+                                imageVector = if (!state.isFlashlightOn) ImageVector.vectorResource(
+                                    R.drawable.zap_off) else ImageVector.vectorResource(R.drawable.zap),
                                 contentDescription = if (!state.isFlashlightOn) stringResource(R.string.off_flashlight) else stringResource(R.string.on_flashlight),
                             )
                         }

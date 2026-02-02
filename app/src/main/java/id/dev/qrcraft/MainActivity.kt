@@ -1,5 +1,6 @@
 package id.dev.qrcraft
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,10 +14,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import id.dev.core.presentation.component.QrCraftBottomBar
 import id.dev.core.presentation.theme.QRCraftTheme
+import id.dev.home.presentation.model.QrTypeIdentifier
 import id.dev.qrcraft.navigation.navs.AppNavigation
 import id.dev.qrcraft.navigation.screens.Screens
 
@@ -32,6 +35,10 @@ class MainActivity : ComponentActivity() {
                 var bottomBarVisible by rememberSaveable { (mutableStateOf(true)) }
                 val currentRoute =
                     navBackStackEntry?.destination?.route ?: Screens.CameraScreen.toString()
+
+                LaunchedEffect(intent) {
+                    handleShortcutIntent(intent, navController)
+                }
 
                 LaunchedEffect(currentRoute) {
                     bottomBarVisible = when {
@@ -92,6 +99,31 @@ class MainActivity : ComponentActivity() {
                             bottomBarVisible = isCollapsed
                         }
                     )
+                }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
+    private fun handleShortcutIntent(intent: Intent?, navController: NavController) {
+        val qrTypeString = intent?.getStringExtra("qr_type")
+        qrTypeString?.let {
+            val qrType = QrTypeIdentifier.fromString(it)
+            if (qrType == QrTypeIdentifier.TEXT) {
+                navController.navigate(Screens.CreateQrScreen) {
+                    launchSingleTop = true
+                    popUpTo(Screens.CameraScreen) {
+                        saveState = true
+                    }
+                }
+                navController.navigate(
+                    Screens.GenerateQrScreen(qrType = QrTypeIdentifier.TEXT.name)
+                ) {
+                    launchSingleTop = true
                 }
             }
         }

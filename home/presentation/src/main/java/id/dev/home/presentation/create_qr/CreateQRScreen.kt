@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Shortcut
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +39,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun CreateQRRoot(
     onNavigateToGenerator: (QrTypeIdentifier) -> Unit,
+    onCreateQrShortcut: () -> Unit,
     viewModel: CreateQRViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -44,6 +49,7 @@ fun CreateQRRoot(
         onAction = { action ->
             when (action) {
                 is CreateQRAction.SelectQRType -> onNavigateToGenerator(action.qrTypeIdentifier)
+                CreateQRAction.CreateQrShortcut -> onCreateQrShortcut()
             }
             viewModel.onAction(action)
         }
@@ -75,7 +81,17 @@ fun CreateQRScreen(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent,
-                )
+                ),
+                actions = {
+                    IconButton(
+                        onClick = { onAction(CreateQRAction.CreateQrShortcut) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.Shortcut,
+                            contentDescription = null
+                        )
+                    }
+                }
             )
         }
     ) { innerPadding ->
